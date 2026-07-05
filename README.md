@@ -56,7 +56,9 @@ GitHub Actions (cron, Mondays 06:00 UTC)
 1. **Add the API key.** Repo → Settings → Secrets and variables → Actions →
    `ANTHROPIC_API_KEY`.
 2. **Enable Pages.** Repo → Settings → Pages → Source: **GitHub Actions**.
-3. **Run it once.** Actions → *Weekly AI Forecast* → *Run workflow* (it also fires
+3. **Merge to the default branch.** Scheduled (cron) workflows only run from the
+   default branch, so the weekly automation starts once this lands on `main`.
+4. **Run it once.** Actions → *Weekly AI Forecast* → *Run workflow* (it also fires
    automatically every Monday 06:00 UTC).
 
 Cost estimate: one weekly run makes ~7 Claude calls (1 web-search scan, 5 ensemble

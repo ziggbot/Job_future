@@ -41,9 +41,14 @@ jobs:
           else
             WEEK=$(python -c "import json;print(json.load(open('data/latest.json'))['week'])")
             git commit -m "Forecast update: ${WEEK}"
-            git push
+            # actions/checkout leaves a detached HEAD — push it back explicitly
+            git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
 
   deploy:
     needs: forecast
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     uses: ./.github/workflows/deploy-pages.yml

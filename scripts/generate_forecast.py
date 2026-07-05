@@ -49,28 +49,36 @@ def week_label(now: datetime) -> str:
 
 def scan_week(now: datetime) -> str:
     """One web-search pass over the week's AI-and-work news, returned as a digest."""
-    response = client.messages.create(
-        model=MODEL,
-        max_tokens=16000,
-        thinking={"type": "adaptive"},
-        tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 8}],
-        messages=[{
-            "role": "user",
-            "content": (
-                f"Today is {now:%Y-%m-%d}. Search the web for the most significant "
-                "developments of roughly the past 7-10 days that bear on AI's ability to "
-                "automate or transform human jobs: new model capabilities, agentic-AI and "
-                "robotics milestones, major enterprise AI deployments or layoffs/hiring "
-                "shifts attributed to AI, regulation, and adoption data.\n\n"
-                "Then write a neutral digest of 5-12 bullet points. Each bullet: one "
-                "development and, briefly, which kinds of work it most affects. "
-                "Facts only, no forecasting yet. If a week is quiet, say so — do not "
-                "inflate minor news."
-            ),
-        }],
+    user_content = (
+        f"Today is {now:%Y-%m-%d}. Search the web for the most significant "
+        "developments of roughly the past 7-10 days that bear on AI's ability to "
+        "automate or transform human jobs: new model capabilities, agentic-AI and "
+        "robotics milestones, major enterprise AI deployments or layoffs/hiring "
+        "shifts attributed to AI, regulation, and adoption data.\n\n"
+        "Then write a neutral digest of 5-12 bullet points inside <digest></digest> "
+        "tags. Each bullet: one development and, briefly, which kinds of work it "
+        "most affects. Facts only, no forecasting yet. If a week is quiet, say so — "
+        "do not inflate minor news."
     )
-    digest = "\n".join(b.text for b in response.content if b.type == "text")
-    return digest.strip()
+    messages = [{"role": "user", "content": user_content}]
+    for _ in range(5):  # server-side tool loop can pause; re-send to resume
+        response = client.messages.create(
+            model=MODEL,
+            max_tokens=16000,
+            thinking={"type": "adaptive"},
+            tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 8}],
+            messages=messages,
+        )
+        if response.stop_reason != "pause_turn":
+            break
+        messages = [
+            {"role": "user", "content": user_content},
+            {"role": "assistant", "content": response.content},
+        ]
+    text = "\n".join(b.text for b in response.content if b.type == "text")
+    if "<digest>" in text and "</digest>" in text:
+        text = text.split("<digest>", 1)[1].split("</digest>", 1)[0]
+    return text.strip()
 
 
 # ------------------------------------------------------------ 2. ENSEMBLE
