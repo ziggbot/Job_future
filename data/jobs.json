@@ -1,0 +1,92 @@
+{
+  "version": 1,
+  "note": "Canonical job categories tracked by the index. Loosely aligned with SOC/ISCO major groups but named for recognizability and shareability. IDs are stable — never rename an id, only add new entries.",
+  "jobs": [
+    { "id": "data-entry-clerks", "name": "Data Entry Clerks", "group": "Office & Administrative" },
+    { "id": "telemarketers", "name": "Telemarketers", "group": "Office & Administrative" },
+    { "id": "customer-service-reps", "name": "Customer Service Representatives", "group": "Office & Administrative" },
+    { "id": "receptionists", "name": "Receptionists & Front Desk", "group": "Office & Administrative" },
+    { "id": "executive-assistants", "name": "Executive & Admin Assistants", "group": "Office & Administrative" },
+    { "id": "bookkeepers", "name": "Bookkeepers & Payroll Clerks", "group": "Office & Administrative" },
+    { "id": "insurance-claims-processors", "name": "Insurance Claims Processors", "group": "Office & Administrative" },
+    { "id": "hr-recruiters", "name": "Recruiters & HR Screeners", "group": "Office & Administrative" },
+
+    { "id": "translators", "name": "Translators & Interpreters", "group": "Creative & Media" },
+    { "id": "copywriters", "name": "Copywriters & Content Writers", "group": "Creative & Media" },
+    { "id": "journalists", "name": "Journalists & Reporters", "group": "Creative & Media" },
+    { "id": "graphic-designers", "name": "Graphic Designers", "group": "Creative & Media" },
+    { "id": "stock-photographers", "name": "Stock & Product Photographers", "group": "Creative & Media" },
+    { "id": "voice-actors", "name": "Voice Actors & Narrators", "group": "Creative & Media" },
+    { "id": "video-editors", "name": "Video Editors", "group": "Creative & Media" },
+    { "id": "illustrators", "name": "Illustrators & Concept Artists", "group": "Creative & Media" },
+    { "id": "musicians-production", "name": "Session Musicians & Music Producers", "group": "Creative & Media" },
+
+    { "id": "software-developers", "name": "Software Developers", "group": "Technology" },
+    { "id": "qa-testers", "name": "QA & Software Testers", "group": "Technology" },
+    { "id": "data-analysts", "name": "Data Analysts", "group": "Technology" },
+    { "id": "it-support", "name": "IT Support & Help Desk", "group": "Technology" },
+    { "id": "web-designers", "name": "Web & UI Designers", "group": "Technology" },
+    { "id": "sysadmins-devops", "name": "SysAdmins & DevOps Engineers", "group": "Technology" },
+    { "id": "cybersecurity-analysts", "name": "Cybersecurity Analysts", "group": "Technology" },
+
+    { "id": "paralegals", "name": "Paralegals & Legal Assistants", "group": "Legal" },
+    { "id": "contract-lawyers", "name": "Contract & Document-Review Lawyers", "group": "Legal" },
+    { "id": "trial-lawyers", "name": "Trial & Courtroom Lawyers", "group": "Legal" },
+
+    { "id": "accountants", "name": "Accountants & Auditors", "group": "Finance" },
+    { "id": "tax-preparers", "name": "Tax Preparers", "group": "Finance" },
+    { "id": "financial-analysts", "name": "Financial & Investment Analysts", "group": "Finance" },
+    { "id": "loan-officers", "name": "Loan Officers & Underwriters", "group": "Finance" },
+    { "id": "bank-tellers", "name": "Bank Tellers", "group": "Finance" },
+    { "id": "actuaries", "name": "Actuaries & Risk Analysts", "group": "Finance" },
+
+    { "id": "radiologists", "name": "Radiologists & Medical Imaging Diagnosticians", "group": "Healthcare" },
+    { "id": "pharmacists", "name": "Pharmacists (dispensing)", "group": "Healthcare" },
+    { "id": "general-practitioners", "name": "General Practitioners (diagnosis & triage)", "group": "Healthcare" },
+    { "id": "nurses", "name": "Nurses & Bedside Care", "group": "Healthcare" },
+    { "id": "therapists-counselors", "name": "Therapists & Mental Health Counselors", "group": "Healthcare" },
+    { "id": "surgeons", "name": "Surgeons", "group": "Healthcare" },
+    { "id": "medical-transcriptionists", "name": "Medical Transcriptionists & Coders", "group": "Healthcare" },
+
+    { "id": "teachers-k12", "name": "K-12 Teachers", "group": "Education" },
+    { "id": "university-lecturers", "name": "University Lecturers", "group": "Education" },
+    { "id": "tutors", "name": "Private Tutors & Test-Prep Instructors", "group": "Education" },
+    { "id": "corporate-trainers", "name": "Corporate Trainers & Course Creators", "group": "Education" },
+
+    { "id": "retail-cashiers", "name": "Retail Cashiers", "group": "Sales & Service" },
+    { "id": "sales-reps-b2b", "name": "B2B Sales Representatives", "group": "Sales & Service" },
+    { "id": "real-estate-agents", "name": "Real Estate Agents", "group": "Sales & Service" },
+    { "id": "travel-agents", "name": "Travel Agents", "group": "Sales & Service" },
+    { "id": "fast-food-workers", "name": "Fast Food Workers", "group": "Sales & Service" },
+    { "id": "baristas-waitstaff", "name": "Baristas & Waitstaff", "group": "Sales & Service" },
+    { "id": "hairdressers", "name": "Hairdressers & Barbers", "group": "Sales & Service" },
+
+    { "id": "truck-drivers", "name": "Long-Haul Truck Drivers", "group": "Transport & Logistics" },
+    { "id": "taxi-rideshare-drivers", "name": "Taxi & Rideshare Drivers", "group": "Transport & Logistics" },
+    { "id": "delivery-couriers", "name": "Delivery & Courier Drivers", "group": "Transport & Logistics" },
+    { "id": "warehouse-workers", "name": "Warehouse & Fulfillment Workers", "group": "Transport & Logistics" },
+    { "id": "airline-pilots", "name": "Airline Pilots", "group": "Transport & Logistics" },
+
+    { "id": "assembly-line-workers", "name": "Assembly Line & Factory Workers", "group": "Manufacturing & Trades" },
+    { "id": "welders-machinists", "name": "Welders & Machinists", "group": "Manufacturing & Trades" },
+    { "id": "electricians", "name": "Electricians", "group": "Manufacturing & Trades" },
+    { "id": "plumbers", "name": "Plumbers & HVAC Technicians", "group": "Manufacturing & Trades" },
+    { "id": "construction-workers", "name": "Construction Workers", "group": "Manufacturing & Trades" },
+    { "id": "farmers-agricultural", "name": "Farm & Agricultural Workers", "group": "Manufacturing & Trades" },
+
+    { "id": "research-scientists", "name": "Research Scientists", "group": "Science & Engineering" },
+    { "id": "civil-mechanical-engineers", "name": "Civil & Mechanical Engineers", "group": "Science & Engineering" },
+    { "id": "architects", "name": "Architects", "group": "Science & Engineering" },
+    { "id": "lab-technicians", "name": "Laboratory Technicians", "group": "Science & Engineering" },
+
+    { "id": "police-officers", "name": "Police Officers", "group": "Public & Social" },
+    { "id": "firefighters", "name": "Firefighters & Emergency Responders", "group": "Public & Social" },
+    { "id": "social-workers", "name": "Social Workers", "group": "Public & Social" },
+    { "id": "childcare-workers", "name": "Childcare Workers", "group": "Public & Social" },
+    { "id": "clergy", "name": "Clergy & Religious Leaders", "group": "Public & Social" },
+
+    { "id": "ceos-executives", "name": "CEOs & Senior Executives", "group": "Management" },
+    { "id": "middle-managers", "name": "Middle Managers & Project Managers", "group": "Management" },
+    { "id": "management-consultants", "name": "Management Consultants", "group": "Management" }
+  ]
+}

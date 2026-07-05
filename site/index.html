@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Job Displacement Index — the AI's own weekly forecast</title>
+<meta name="description" content="Every week, an AI publishes its own probability estimates of which jobs it will replace — and when. No analysts, no cited studies. The AI's own numbers.">
+<meta property="og:title" content="AI Job Displacement Index">
+<meta property="og:description" content="What does the AI itself think it will replace, and when? Fresh probabilities every Monday.">
+<meta property="og:type" content="website">
+<style>
+:root {
+  --page: #f9f9f7;
+  --surface: #fcfcfb;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #898781;
+  --grid: #e1e0d9;
+  --baseline: #c3c2b7;
+  --border: rgba(11,11,11,0.10);
+  --seq-100:#cde2fb; --seq-200:#9ec5f4; --seq-300:#6da7ec; --seq-400:#3987e5;
+  --seq-450:#2a78d6; --seq-550:#1c5cab; --seq-700:#0d366b;
+  --up: #e34948;        /* risk increased — warm diverging pole */
+  --down: #2a78d6;      /* risk decreased — cool diverging pole */
+  --accent: #2a78d6;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --ink: #ffffff;
+    --ink-2: #c3c2b7;
+    --muted: #898781;
+    --grid: #2c2c2a;
+    --baseline: #383835;
+    --border: rgba(255,255,255,0.10);
+    --seq-100:#0d366b; --seq-200:#104281; --seq-300:#184f95; --seq-400:#256abf;
+    --seq-450:#3987e5; --seq-550:#6da7ec; --seq-700:#b7d3f6;
+    --up: #e66767;
+    --down: #3987e5;
+    --accent: #3987e5;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1060px; margin: 0 auto; padding: 0 20px; }
+
+/* ---------- header ---------- */
+header { padding: 44px 0 8px; }
+.kicker {
+  font-size: 13px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted); font-weight: 600;
+}
+h1 { font-size: clamp(28px, 5vw, 44px); line-height: 1.1; margin: 6px 0 10px; letter-spacing: -0.02em; }
+.sub { color: var(--ink-2); max-width: 62ch; font-size: 16px; margin: 0; }
+.sub strong { color: var(--ink); }
+
+.meta-row {
+  display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: baseline;
+  margin: 18px 0 0; font-size: 13px; color: var(--muted);
+}
+.meta-row .dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#0ca30c; margin-right:6px; vertical-align:baseline; }
+
+/* ---------- headline card ---------- */
+.headline-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 22px 24px; margin: 26px 0 0;
+}
+.headline-card .week-tag { font-size: 12px; letter-spacing:.12em; text-transform: uppercase; color: var(--muted); font-weight:600; }
+.headline-card h2 { font-size: clamp(19px, 3vw, 26px); margin: 8px 0 10px; line-height: 1.25; letter-spacing:-0.01em; }
+.headline-card p { color: var(--ink-2); margin: 0 0 8px; font-size: 15px; }
+.signal { font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--grid); margin-top: 14px; padding-top: 12px; }
+.signal b { color: var(--ink-2); font-weight: 600; }
+
+/* ---------- stat tiles ---------- */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 18px 0 0; }
+.tile {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 16px 18px;
+}
+.tile .label { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.tile .value { font-size: 30px; font-weight: 700; margin: 4px 0 2px; letter-spacing: -0.02em; }
+.tile .detail { font-size: 13px; color: var(--ink-2); }
+.tile .value .updelta { color: var(--up); } .tile .value .downdelta { color: var(--down); }
+
+/* ---------- controls ---------- */
+.controls {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  margin: 34px 0 14px; position: sticky; top: 0; z-index: 5;
+  background: var(--page); padding: 10px 0;
+}
+.horizons { display: inline-flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; background: var(--surface); }
+.horizons button {
+  appearance: none; border: 0; background: transparent; color: var(--ink-2);
+  font: inherit; font-size: 13.5px; font-weight: 600; padding: 7px 14px; cursor: pointer;
+}
+.horizons button + button { border-left: 1px solid var(--grid); }
+.horizons button.active { background: var(--accent); color: #fff; }
+select, input[type="search"] {
+  font: inherit; font-size: 13.5px; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 9px;
+  padding: 7px 10px;
+}
+input[type="search"] { min-width: 160px; }
+.controls .spacer { flex: 1; }
+.controls .hint { font-size: 12.5px; color: var(--muted); }
+
+/* ---------- ranking rows ---------- */
+#ranking { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.row {
+  display: grid;
+  grid-template-columns: 34px minmax(180px, 1.25fr) minmax(140px, 1fr) 156px 74px 92px;
+  gap: 14px; align-items: center;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 10px 16px;
+  scroll-margin-top: 70px;
+}
+.row .rank { font-size: 14px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+.row .rankmove { display:block; font-size: 10.5px; font-weight: 600; }
+.row .job .name { font-weight: 650; font-size: 14.5px; line-height: 1.25; }
+.row .job .grp { font-size: 11.5px; color: var(--muted); }
+.row .job .note { font-size: 12px; color: var(--ink-2); margin-top: 3px; display: none; }
+.row.open .job .note { display: block; }
+.row { cursor: pointer; }
+.row:hover { border-color: var(--accent); }
+
+.meter { position: relative; height: 18px; background: var(--grid); border-radius: 4px; overflow: hidden; }
+.meter .fill { position: absolute; inset: 0 auto 0 0; border-radius: 4px 3px 3px 4px; min-width: 2px; }
+.probcell { display: flex; align-items: center; gap: 10px; }
+.probcell .pct { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 44px; text-align: right; }
+.probcell .meter { flex: 1; }
+
+.mini { display: flex; gap: 8px; font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; justify-content: flex-end; }
+.mini span b { color: var(--ink-2); font-weight: 600; display: block; text-align: right; }
+
+.delta { font-size: 13px; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+.delta.up { color: var(--up); } .delta.down { color: var(--down); } .delta.flat { color: var(--muted); font-weight: 500; }
+
+.spark svg { display: block; }
+.spark .line { fill: none; stroke: var(--seq-450); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.spark .dotpt { fill: var(--seq-450); }
+
+@media (max-width: 760px) {
+  .row { grid-template-columns: 28px 1fr 120px 64px; }
+  .row .mini, .row .spark { display: none; }
+}
+
+/* ---------- sections ---------- */
+section.prose { margin: 44px 0 0; }
+section.prose h3 { font-size: 20px; margin: 0 0 10px; letter-spacing: -0.01em; }
+section.prose p, section.prose li { color: var(--ink-2); font-size: 14.5px; max-width: 74ch; }
+section.prose code { background: var(--surface); border: 1px solid var(--border); border-radius: 5px; padding: 1px 5px; font-size: 13px; }
+.disclaimer {
+  margin: 34px 0 0; padding: 16px 18px; border: 1px solid var(--border);
+  border-radius: 12px; background: var(--surface); font-size: 13px; color: var(--ink-2);
+}
+footer { margin: 40px 0 60px; font-size: 13px; color: var(--muted); }
+footer a { color: var(--accent); text-decoration: none; }
+.loading, .error { margin: 60px 0; color: var(--muted); font-size: 15px; }
+.tooltip {
+  position: fixed; pointer-events: none; z-index: 50; display: none;
+  background: var(--ink); color: var(--page); font-size: 12px; font-weight: 600;
+  padding: 4px 8px; border-radius: 6px; white-space: nowrap;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">Updated every Monday · by the AI itself</div>
+    <h1>AI Job Displacement Index</h1>
+    <p class="sub">Every week, <strong>Claude</strong> — a frontier AI model — publishes its own calibrated
+    probability that AI will do the majority of each job's work, and when. No analysts. No cited studies.
+    These are <strong>the AI's own numbers</strong>, updated as its makers' technology advances.</p>
+    <div class="meta-row">
+      <span id="meta-week"></span>
+      <span id="meta-model"></span>
+      <span id="meta-countdown"></span>
+    </div>
+  </header>
+
+  <div id="app">
+    <div class="loading" id="loading">Loading this week's forecast…</div>
+  </div>
+
+  <section class="prose" id="methodology">
+    <h3>How these numbers are made</h3>
+    <p>Each week an automated pipeline asks the model to forecast, with no human editing of the numbers:</p>
+    <ul>
+      <li><b>Scan.</b> The model searches the web for the week's genuinely significant AI-and-work developments and writes itself a neutral digest.</li>
+      <li><b>Forecast.</b> It then produces, several times independently, a probability for every occupation and horizon: <i>“the chance that by that year, AI routinely and economically performs the majority of this job's current tasks, and human employment in it is materially falling.”</i> It sees last week's numbers and is instructed to update like a Bayesian — move only where the evidence moved.</li>
+      <li><b>Aggregate.</b> The published number is the median of the independent runs; the full run-to-run spread is kept in the data for transparency.</li>
+      <li><b>Explain.</b> The model writes the weekly headline and a one-line rationale per job — in its own voice, never citing outside studies as authority.</li>
+    </ul>
+    <p>Every weekly snapshot is committed to the public repository, so the model's track record — including everything it gets wrong — is permanent and auditable.</p>
+  </section>
+
+  <div class="disclaimer">
+    <b>Read this before quoting a number.</b> These are probabilistic guesses by an AI language model about its own technology — a striking perspective, not a labor-market authority.
+    The model can be miscalibrated, biased toward its own capabilities, and wrong in both directions. “Displacement” here is about tasks and hiring trends, not a prediction that any individual will lose their job.
+    Nothing on this page is career, financial, or policy advice.
+  </div>
+
+  <footer>
+    Data, methodology and full history are open source · <a id="repo-link" href="#" rel="noopener">GitHub</a> ·
+    Every number on this page was generated by an AI model. Humans built the pipeline; the AI makes the calls.
+  </footer>
+</div>
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+(async function () {
+  const HORIZONS = ["2027", "2030", "2035", "2040"];
+  let horizon = "2030";
+  let group = "all";
+  let query = "";
+  let latest = null;
+  let history = [];        // [{week, jobsById}]
+  const app = document.getElementById("app");
+  const tooltip = document.getElementById("tooltip");
+
+  const fmtPct = p => Math.round(p * 100) + "%";
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+  // sequential blue ramp keyed to probability (magnitude → one hue, light→dark)
+  function rampColor(p) {
+    const styles = getComputedStyle(document.documentElement);
+    const steps = ["--seq-100","--seq-200","--seq-300","--seq-400","--seq-450","--seq-550","--seq-700"];
+    const i = Math.min(steps.length - 1, Math.floor(p * steps.length));
+    return styles.getPropertyValue(steps[i]).trim();
+  }
+
+  function nextUpdateText() {
+    const now = new Date();
+    const next = new Date(now);
+    const day = now.getUTCDay();
+    let add = (1 - day + 7) % 7; // days until Monday
+    next.setUTCDate(now.getUTCDate() + add);
+    next.setUTCHours(6, 0, 0, 0);
+    if (next <= now) next.setUTCDate(next.getUTCDate() + 7);
+    const hrs = Math.round((next - now) / 36e5);
+    if (hrs > 48) return "next update in " + Math.round(hrs / 24) + " days";
+    return "next update in " + hrs + " h";
+  }
+
+  async function loadData() {
+    const res = await fetch("data/latest.json", { cache: "no-store" });
+    if (!res.ok) throw new Error("no data");
+    latest = await res.json();
+    try {
+      const idx = await (await fetch("data/index.json", { cache: "no-store" })).json();
+      const weeks = idx.slice(-26); // last ~6 months for sparklines
+      const files = await Promise.all(weeks.map(w =>
+        fetch("data/history/" + w + ".json").then(r => r.ok ? r.json() : null).catch(() => null)));
+      history = files.filter(Boolean).map(f => ({
+        week: f.week,
+        jobs: Object.fromEntries(f.jobs.map(j => [j.id, j]))
+      }));
+    } catch (e) { history = []; }
+  }
+
+  function sparkline(jobId) {
+    const pts = history.map(h => h.jobs[jobId]).filter(Boolean).map(j => j["p" + horizon]);
+    if (pts.length < 2) return '<span style="font-size:11px;color:var(--muted)">history<br>from wk 2</span>';
+    const w = 88, h = 26, pad = 3;
+    const min = Math.min(...pts), max = Math.max(...pts);
+    const span = (max - min) || 0.01;
+    const step = (w - 2 * pad) / (pts.length - 1);
+    const xy = pts.map((p, i) => [pad + i * step, h - pad - ((p - min) / span) * (h - 2 * pad)]);
+    const d = xy.map((c, i) => (i ? "L" : "M") + c[0].toFixed(1) + " " + c[1].toFixed(1)).join(" ");
+    const last = xy[xy.length - 1];
+    const weeks = history.map(x => x.week);
+    return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img"
+      aria-label="probability history" data-weeks='${esc(JSON.stringify(weeks))}'
+      data-vals='${esc(JSON.stringify(pts))}'>
+      <path class="line" d="${d}"></path>
+      <circle class="dotpt" cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.6"></circle>
+    </svg>`;
+  }
+
+  function deltaCell(job) {
+    const prev = history.length >= 2 ? history[history.length - 2].jobs[job.id] : null;
+    const d = prev ? +(job["p" + horizon] - prev["p" + horizon]).toFixed(2)
+                   : (horizon === "2030" ? job.delta2030 : null);
+    if (d === null || d === undefined) return '<div class="delta flat">new</div>';
+    if (Math.abs(d) < 0.005) return '<div class="delta flat">＝</div>';
+    const cls = d > 0 ? "up" : "down";
+    const arrow = d > 0 ? "▲" : "▼";
+    return `<div class="delta ${cls}" title="change vs last week">${arrow} ${Math.abs(d * 100).toFixed(0)}pp</div>`;
+  }
+
+  function render() {
+    const jobs = latest.jobs
+      .filter(j => group === "all" || j.group === group)
+      .filter(j => !query || j.name.toLowerCase().includes(query) || j.group.toLowerCase().includes(query))
+      .slice()
+      .sort((a, b) => b["p" + horizon] - a["p" + horizon]);
+
+    const groups = [...new Set(latest.jobs.map(j => j.group))].sort();
+
+    // movers (by selected horizon when history allows, else stored delta2030)
+    const withDelta = latest.jobs.map(j => {
+      const prev = history.length >= 2 ? history[history.length - 2].jobs[j.id] : null;
+      const d = prev ? j["p" + horizon] - prev["p" + horizon]
+                     : (horizon === "2030" && j.delta2030 != null ? j.delta2030 : 0);
+      return { ...j, d };
+    });
+    const riser = withDelta.slice().sort((a, b) => b.d - a.d)[0];
+    const faller = withDelta.slice().sort((a, b) => a.d - b.d)[0];
+    const hasMovement = withDelta.some(j => Math.abs(j.d) >= 0.005);
+    const safest = latest.jobs.slice().sort((a, b) => a["p" + horizon] - b["p" + horizon])[0];
+    const top = jobs[0] || latest.jobs[0];
+    const avg = latest.jobs.reduce((s, j) => s + j["p" + horizon], 0) / latest.jobs.length;
+
+    document.getElementById("meta-week").innerHTML =
+      `<span class="dot"></span>week <b>${esc(latest.week)}</b> · ${esc((latest.generated_at || "").slice(0, 10))}`;
+    document.getElementById("meta-model").textContent = "model: " + latest.model;
+    document.getElementById("meta-countdown").textContent = nextUpdateText();
+
+    app.innerHTML = `
+      <div class="headline-card">
+        <div class="week-tag">The AI says — week ${esc(latest.week)}</div>
+        <h2>“${esc(latest.headline)}”</h2>
+        <p>${esc(latest.summary)}</p>
+        <div class="signal"><b>Signal of the week:</b> ${esc(latest.signal_of_the_week)}</div>
+      </div>
+
+      <div class="tiles">
+        <div class="tile">
+          <div class="label">Most at risk by ${horizon}</div>
+          <div class="value">${fmtPct(top["p" + horizon])}</div>
+          <div class="detail">${esc(top.name)}</div>
+        </div>
+        ${hasMovement ? `
+        <div class="tile">
+          <div class="label">Biggest riser</div>
+          <div class="value"><span class="updelta">▲ ${(Math.max(0, riser.d) * 100).toFixed(0)}pp</span></div>
+          <div class="detail">${esc(riser.name)} → ${fmtPct(riser["p" + horizon])}</div>
+        </div>
+        <div class="tile">
+          <div class="label">Biggest faller</div>
+          <div class="value"><span class="downdelta">▼ ${(Math.abs(Math.min(0, faller.d)) * 100).toFixed(0)}pp</span></div>
+          <div class="detail">${esc(faller.name)} → ${fmtPct(faller["p" + horizon])}</div>
+        </div>` : `
+        <div class="tile">
+          <div class="label">Safest by ${horizon}</div>
+          <div class="value">${fmtPct(safest["p" + horizon])}</div>
+          <div class="detail">${esc(safest.name)}</div>
+        </div>
+        <div class="tile">
+          <div class="label">Weekly moves</div>
+          <div class="value">—</div>
+          <div class="detail">first edition — tracking starts next week</div>
+        </div>`}
+        <div class="tile">
+          <div class="label">Index average (${horizon})</div>
+          <div class="value">${fmtPct(avg)}</div>
+          <div class="detail">across ${latest.jobs.length} job categories</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="horizons" role="tablist" aria-label="forecast horizon">
+          ${HORIZONS.map(h => `<button role="tab" data-h="${h}" class="${h === horizon ? "active" : ""}" aria-selected="${h === horizon}">by ${h}</button>`).join("")}
+        </div>
+        <select id="group-filter" aria-label="filter by field">
+          <option value="all">All fields</option>
+          ${groups.map(g => `<option ${g === group ? "selected" : ""} value="${esc(g)}">${esc(g)}</option>`).join("")}
+        </select>
+        <input type="search" id="search" placeholder="Find a job…" value="${esc(query)}" aria-label="search jobs">
+        <div class="spacer"></div>
+        <div class="hint">click a row for the AI's reasoning</div>
+      </div>
+
+      <div id="ranking">
+        ${jobs.map((j, i) => {
+          const p = j["p" + horizon];
+          return `
+          <div class="row" id="${esc(j.id)}" data-id="${esc(j.id)}" tabindex="0">
+            <div class="rank">${i + 1}${j.rank_delta ? `<span class="rankmove" style="color:var(--${j.rank_delta > 0 ? "up" : "down"})">${j.rank_delta > 0 ? "↑" : "↓"}${Math.abs(j.rank_delta)}</span>` : ""}</div>
+            <div class="job">
+              <div class="name">${esc(j.name)}</div>
+              <div class="grp">${esc(j.group)}</div>
+              <div class="note">“${esc(j.note || "")}”</div>
+            </div>
+            <div class="probcell">
+              <div class="pct">${fmtPct(p)}</div>
+              <div class="meter" title="ensemble spread ±${Math.round((j.spread2030 || 0) * 50)}pp">
+                <div class="fill" style="width:${Math.max(1, p * 100)}%;background:${rampColor(p)}"></div>
+              </div>
+            </div>
+            <div class="mini">
+              ${HORIZONS.filter(h => h !== horizon).map(h => `<span>${h}<b>${fmtPct(j["p" + h])}</b></span>`).join("")}
+            </div>
+            <div class="spark">${sparkline(j.id)}</div>
+            ${deltaCell(j)}
+          </div>`;
+        }).join("")}
+      </div>`;
+
+    // wire controls
+    app.querySelectorAll(".horizons button").forEach(b =>
+      b.addEventListener("click", () => { horizon = b.dataset.h; render(); }));
+    app.querySelector("#group-filter").addEventListener("change", e => { group = e.target.value; render(); });
+    app.querySelector("#search").addEventListener("input", e => { query = e.target.value.toLowerCase(); render(); });
+    app.querySelectorAll(".row").forEach(r => {
+      r.addEventListener("click", () => r.classList.toggle("open"));
+      r.addEventListener("keydown", e => { if (e.key === "Enter") r.classList.toggle("open"); });
+    });
+    // sparkline hover tooltip
+    app.querySelectorAll(".spark svg").forEach(svg => {
+      svg.addEventListener("mousemove", e => {
+        const weeks = JSON.parse(svg.dataset.weeks);
+        const vals = JSON.parse(svg.dataset.vals);
+        const rect = svg.getBoundingClientRect();
+        const i = Math.min(vals.length - 1, Math.max(0, Math.round((e.clientX - rect.left - 3) / ((rect.width - 6) / (vals.length - 1)))));
+        tooltip.textContent = weeks[i] + ": " + fmtPct(vals[i]);
+        tooltip.style.display = "block";
+        tooltip.style.left = (e.clientX + 12) + "px";
+        tooltip.style.top = (e.clientY - 28) + "px";
+      });
+      svg.addEventListener("mouseleave", () => { tooltip.style.display = "none"; });
+    });
+    // deep link
+    if (location.hash) {
+      const el = document.getElementById(location.hash.slice(1));
+      if (el) { el.classList.add("open"); el.scrollIntoView({ block: "center" }); }
+    }
+  }
+
+  // bar colors are inlined at render time — re-render when the color scheme flips
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => latest && render());
+
+  try {
+    await loadData();
+    document.getElementById("loading")?.remove();
+    render();
+  } catch (e) {
+    document.getElementById("loading").outerHTML =
+      '<div class="error">No forecast published yet. The first weekly run will populate this page automatically.</div>';
+  }
+})();
+</script>
+</body>
+</html>
