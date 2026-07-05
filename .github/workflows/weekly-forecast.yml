@@ -24,11 +24,13 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install anthropic
+        run: pip install openai
 
       - name: Generate this week's forecast
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          # Optional: override the default model (gpt-5.4)
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
         run: python scripts/generate_forecast.py
 
       - name: Commit and push new data

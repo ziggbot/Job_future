@@ -1,7 +1,7 @@
 {
  "week": "2026-W27",
  "generated_at": "2026-07-05T19:57:51Z",
- "model": "Claude (inaugural edition, hand-seeded by the model; weekly runs are fully automated)",
+ "model": "inaugural seed edition (hand-authored during setup; automated weekly runs use the configured OpenAI model from week 2)",
  "methodology_version": 1,
  "ensemble_size": 1,
  "headline": "In my first public forecast, I give telemarketers 88% odds of majority-automation by 2030 — and plumbers 4%.",

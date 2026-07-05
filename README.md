@@ -2,7 +2,8 @@
 
 **A public webpage where the AI itself forecasts which jobs it will replace — updated automatically every week.**
 
-Every Monday, a fully automated pipeline asks Claude to publish its own calibrated
+Every Monday, a fully automated pipeline asks a frontier OpenAI model (default:
+`gpt-5.4`) to publish its own calibrated
 probabilities that AI will perform the majority of each job's work by 2027, 2030, 2035
 and 2040. No human edits the numbers. No external studies are cited as authority —
 the entire point is that these are *the AI's own guesses*, on the record, week after
@@ -13,13 +14,13 @@ week, with a permanent auditable history.
 ```
 GitHub Actions (cron, Mondays 06:00 UTC)
   └─ scripts/generate_forecast.py
-       1. SCAN      — Claude web-searches the week's AI-and-work developments → digest
+       1. SCAN      — the model web-searches the week's AI-and-work developments → digest
        2. ENSEMBLE  — 5 independent forecast runs, each producing probabilities
                       for every job × horizon (sees last week's numbers, told to
                       update like a Bayesian)
        3. AGGREGATE — published number = median of the runs; run spread kept for
                       transparency; week-over-week deltas + rank moves computed
-       4. COMMENT   — Claude writes the weekly headline, summary, "signal of the
+       4. COMMENT   — the model writes the weekly headline, summary, "signal of the
                       week" and a one-line rationale per job, in first person
   └─ commits data/latest.json + data/history/<week>.json
   └─ deploys the static site to GitHub Pages
@@ -44,7 +45,7 @@ GitHub Actions (cron, Mondays 06:00 UTC)
 | Path | What it is |
 |---|---|
 | `site/index.html` | The entire frontend — one self-contained file, no dependencies |
-| `scripts/generate_forecast.py` | The weekly pipeline (Anthropic API) |
+| `scripts/generate_forecast.py` | The weekly pipeline (OpenAI API, Responses endpoint) |
 | `data/jobs.json` | Canonical job taxonomy (~74 recognizable categories; ids are stable) |
 | `data/latest.json` | The currently published forecast |
 | `data/history/YYYY-Www.json` | One immutable snapshot per week — the track record |
@@ -54,15 +55,17 @@ GitHub Actions (cron, Mondays 06:00 UTC)
 ## Setup (one time)
 
 1. **Add the API key.** Repo → Settings → Secrets and variables → Actions →
-   `ANTHROPIC_API_KEY`.
+   `OPENAI_API_KEY`. (Optional: set a repo *variable* `OPENAI_MODEL` to override the
+   default `gpt-5.4`.)
 2. **Enable Pages.** Repo → Settings → Pages → Source: **GitHub Actions**.
 3. **Merge to the default branch.** Scheduled (cron) workflows only run from the
    default branch, so the weekly automation starts once this lands on `main`.
 4. **Run it once.** Actions → *Weekly AI Forecast* → *Run workflow* (it also fires
    automatically every Monday 06:00 UTC).
 
-Cost estimate: one weekly run makes ~7 Claude calls (1 web-search scan, 5 ensemble
-forecasts, 1 commentary) on `claude-opus-4-8` — typically a few dollars per week.
+Cost estimate: one weekly run makes ~7 model calls (1 web-search scan, 5 ensemble
+forecasts with high reasoning effort, 1 commentary) on `gpt-5.4` — typically a few
+dollars per week.
 
 > Note: GitHub disables cron workflows on repos with no activity for 60 days; the
 > weekly data commit keeps this repo active, so that only matters if runs start failing

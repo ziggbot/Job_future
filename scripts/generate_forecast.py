@@ -1,4 +1,4 @@
-"""Weekly AI job-displacement forecast generator.
+"""Weekly AI job-displacement forecast generator (OpenAI API).
 
 Pipeline (all judgments are the model's own — no study citations in output):
   1. SCAN      — one web-search call digests the week's AI/automation developments.
@@ -7,26 +7,29 @@ Pipeline (all judgments are the model's own — no study citations in output):
   4. COMMENT   — one call writes the weekly headline and per-job rationales.
 
 Writes data/latest.json and data/history/<YYYY-Www>.json.
+
+Requires OPENAI_API_KEY. Model defaults to gpt-5.4 (override with OPENAI_MODEL).
 """
 
 import json
+import os
 import statistics
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-import anthropic
+from openai import OpenAI
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 HISTORY = DATA / "history"
 
-MODEL = "claude-opus-4-8"
+MODEL = os.environ.get("OPENAI_MODEL", "gpt-5.4")
 ENSEMBLE_SIZE = 5
 HORIZONS = ["2027", "2030", "2035", "2040"]
 METHODOLOGY_VERSION = 1
 
-client = anthropic.Anthropic()
+client = OpenAI()
 
 
 def load_jobs() -> list[dict]:
@@ -49,33 +52,24 @@ def week_label(now: datetime) -> str:
 
 def scan_week(now: datetime) -> str:
     """One web-search pass over the week's AI-and-work news, returned as a digest."""
-    user_content = (
-        f"Today is {now:%Y-%m-%d}. Search the web for the most significant "
-        "developments of roughly the past 7-10 days that bear on AI's ability to "
-        "automate or transform human jobs: new model capabilities, agentic-AI and "
-        "robotics milestones, major enterprise AI deployments or layoffs/hiring "
-        "shifts attributed to AI, regulation, and adoption data.\n\n"
-        "Then write a neutral digest of 5-12 bullet points inside <digest></digest> "
-        "tags. Each bullet: one development and, briefly, which kinds of work it "
-        "most affects. Facts only, no forecasting yet. If a week is quiet, say so — "
-        "do not inflate minor news."
+    response = client.responses.create(
+        model=MODEL,
+        reasoning={"effort": "medium"},
+        max_output_tokens=16000,
+        tools=[{"type": "web_search", "search_context_size": "high"}],
+        input=(
+            f"Today is {now:%Y-%m-%d}. Search the web for the most significant "
+            "developments of roughly the past 7-10 days that bear on AI's ability to "
+            "automate or transform human jobs: new model capabilities, agentic-AI and "
+            "robotics milestones, major enterprise AI deployments or layoffs/hiring "
+            "shifts attributed to AI, regulation, and adoption data.\n\n"
+            "Then write a neutral digest of 5-12 bullet points inside "
+            "<digest></digest> tags. Each bullet: one development and, briefly, which "
+            "kinds of work it most affects. Facts only, no forecasting yet. If a week "
+            "is quiet, say so — do not inflate minor news."
+        ),
     )
-    messages = [{"role": "user", "content": user_content}]
-    for _ in range(5):  # server-side tool loop can pause; re-send to resume
-        response = client.messages.create(
-            model=MODEL,
-            max_tokens=16000,
-            thinking={"type": "adaptive"},
-            tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 8}],
-            messages=messages,
-        )
-        if response.stop_reason != "pause_turn":
-            break
-        messages = [
-            {"role": "user", "content": user_content},
-            {"role": "assistant", "content": response.content},
-        ]
-    text = "\n".join(b.text for b in response.content if b.type == "text")
+    text = response.output_text
     if "<digest>" in text and "</digest>" in text:
         text = text.split("<digest>", 1)[1].split("</digest>", 1)[0]
     return text.strip()
@@ -148,25 +142,35 @@ def build_forecast_prompt(jobs: list[dict], digest: str, previous: dict | None,
     return "\n\n".join(parts)
 
 
+def structured_call(prompt: str, schema_name: str, schema: dict,
+                    effort: str, max_output_tokens: int) -> dict:
+    response = client.responses.create(
+        model=MODEL,
+        reasoning={"effort": effort},
+        max_output_tokens=max_output_tokens,
+        instructions=FORECASTER_SYSTEM,
+        input=prompt,
+        text={"format": {
+            "type": "json_schema",
+            "name": schema_name,
+            "schema": schema,
+            "strict": True,
+        }},
+    )
+    if response.status == "incomplete":
+        reason = getattr(response.incomplete_details, "reason", "unknown")
+        raise RuntimeError(f"incomplete response ({reason})")
+    return json.loads(response.output_text)
+
+
 def run_ensemble(prompt: str) -> list[dict]:
     samples = []
     for i in range(ENSEMBLE_SIZE):
         try:
-            with client.messages.stream(
-                model=MODEL,
-                max_tokens=64000,
-                thinking={"type": "adaptive"},
-                system=[{
-                    "type": "text",
-                    "text": FORECASTER_SYSTEM,
-                    "cache_control": {"type": "ephemeral"},
-                }],
-                output_config={"format": {"type": "json_schema", "schema": FORECAST_SCHEMA}},
-                messages=[{"role": "user", "content": prompt}],
-            ) as stream:
-                message = stream.get_final_message()
-            text = next(b.text for b in message.content if b.type == "text")
-            samples.append(json.loads(text))
+            samples.append(structured_call(
+                prompt, "weekly_forecasts", FORECAST_SCHEMA,
+                effort="high", max_output_tokens=64000,
+            ))
             print(f"  ensemble sample {i + 1}/{ENSEMBLE_SIZE} ok", file=sys.stderr)
         except Exception as e:  # one bad sample must not kill the weekly run
             print(f"  ensemble sample {i + 1} failed: {e}", file=sys.stderr)
@@ -270,21 +274,8 @@ def write_commentary(results: list[dict], digest: str, previous: dict | None,
         "Never cite external studies or attribute numbers to organizations. "
         "These are your own estimates."
     )
-    with client.messages.stream(
-        model=MODEL,
-        max_tokens=32000,
-        thinking={"type": "adaptive"},
-        system=[{
-            "type": "text",
-            "text": FORECASTER_SYSTEM,
-            "cache_control": {"type": "ephemeral"},
-        }],
-        output_config={"format": {"type": "json_schema", "schema": COMMENT_SCHEMA}},
-        messages=[{"role": "user", "content": prompt}],
-    ) as stream:
-        message = stream.get_final_message()
-    text = next(b.text for b in message.content if b.type == "text")
-    return json.loads(text)
+    return structured_call(prompt, "weekly_commentary", COMMENT_SCHEMA,
+                           effort="medium", max_output_tokens=32000)
 
 
 # ----------------------------------------------------------------- MAIN
@@ -299,7 +290,7 @@ def main() -> None:
         print(f"Forecast for {week} already exists; nothing to do.", file=sys.stderr)
         return
 
-    print(f"[1/4] Scanning the week's developments...", file=sys.stderr)
+    print("[1/4] Scanning the week's developments...", file=sys.stderr)
     digest = scan_week(now)
     print(digest, file=sys.stderr)
 
