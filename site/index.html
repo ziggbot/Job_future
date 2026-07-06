@@ -144,6 +144,16 @@ input[type="search"] { min-width: 160px; }
 .delta { font-size: 13px; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
 .delta.up { color: var(--up); } .delta.down { color: var(--down); } .delta.flat { color: var(--muted); font-weight: 500; }
 
+.band {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink-2); border: 1px solid var(--grid); border-radius: 99px;
+  padding: 1px 8px; margin-left: 8px; vertical-align: 1px;
+}
+.band i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+.defline { font-size: 13px; color: var(--muted); margin: -4px 0 14px; max-width: 84ch; }
+.defline b { color: var(--ink-2); font-weight: 600; }
+
 .spark svg { display: block; }
 .spark .line { fill: none; stroke: var(--seq-450); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .spark .dotpt { fill: var(--seq-450); }
@@ -198,6 +208,7 @@ footer a { color: var(--accent); text-decoration: none; }
       <li><b>Scan.</b> The model searches the web for the week's genuinely significant AI-and-work developments and writes itself a neutral digest.</li>
       <li><b>Forecast.</b> It then produces, several times independently, a probability for every occupation and horizon: <i>“the chance that by that year, AI routinely and economically performs the majority of this job's current tasks, and human employment in it is materially falling.”</i> It sees last week's numbers and is instructed to update like a Bayesian — move only where the evidence moved.</li>
       <li><b>Aggregate.</b> The published number is the median of the independent runs; the full run-to-run spread is kept in the data for transparency.</li>
+      <li><b>Debias.</b> The model is explicitly instructed to respect historical base rates — occupations once rated "high risk" mostly kept growing, only more slowly — and to correct the documented tendency of AI forecasters to skew probabilities upward, especially about their own technology.</li>
       <li><b>Explain.</b> The model writes the weekly headline and a one-line rationale per job — in its own voice, never citing outside studies as authority.</li>
     </ul>
     <p>Every weekly snapshot is committed to the public repository, so the model's track record — including everything it gets wrong — is permanent and auditable.</p>
@@ -228,6 +239,7 @@ footer a { color: var(--accent); text-decoration: none; }
   const tooltip = document.getElementById("tooltip");
 
   const fmtPct = p => Math.round(p * 100) + "%";
+  const band = p => p >= 0.75 ? "Critical" : p >= 0.5 ? "High" : p >= 0.25 ? "Elevated" : p >= 0.10 ? "Guarded" : "Low";
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
   // sequential blue ramp keyed to probability (magnitude → one hue, light→dark)
@@ -380,6 +392,11 @@ footer a { color: var(--accent); text-decoration: none; }
         <div class="hint">click a row for the AI's reasoning</div>
       </div>
 
+      <p class="defline">Each number answers one precise question: <b>how likely is it that by that year,
+      AI routinely and economically does the majority of this job's current tasks — and hiring in it is
+      falling because of it?</b> Task exposure alone doesn't count; deployment, economics, regulation and
+      social acceptance all have to follow.</p>
+
       <div id="ranking">
         ${jobs.map((j, i) => {
           const p = j["p" + horizon];
@@ -388,7 +405,7 @@ footer a { color: var(--accent); text-decoration: none; }
             <div class="rank">${i + 1}${j.rank_delta ? `<span class="rankmove" style="color:var(--${j.rank_delta > 0 ? "up" : "down"})">${j.rank_delta > 0 ? "↑" : "↓"}${Math.abs(j.rank_delta)}</span>` : ""}</div>
             <div class="job">
               <div class="name">${esc(j.name)}</div>
-              <div class="grp">${esc(j.group)}</div>
+              <div class="grp">${esc(j.group)}<span class="band"><i style="background:${rampColor(p)}"></i>${band(p)}</span></div>
               <div class="note">“${esc(j.note || "")}”</div>
             </div>
             <div class="probcell">

@@ -109,6 +109,8 @@ CALIBRATION RULES:
 - Probabilities must be non-decreasing across horizons (p2027 <= p2030 <= p2035 <= p2040).
 - Differentiate: do not give many occupations the same number. Think about each occupation's specific task mix, physical/social components, regulatory moats, and wage-driven automation incentive.
 - Account for friction: enterprise adoption lags capability by years; licensed professions and physical trades resist automation; humans may be preferred in care, trust, and liability roles even when AI is capable.
+- Respect base rates: historically, occupations rated "high risk of automation" mostly kept growing — just more slowly than low-risk ones. Task exposure converts to majority-displacement rarely and late. Your 2027 and 2030 numbers must reflect that conversion lag; distinguish "AI is used for many of this job's tasks" from "the job is being displaced".
+- Correct your known bias: AI forecasters systematically skew probabilities upward and toward affirmative answers, and you may be optimistic about your own technology. When your evidence is thin, err lower, not higher.
 - Do not anchor on round numbers or on well-known published figures. Reason from the task level.
 
 VOICE AND ATTRIBUTION: These are your own estimates. Never attribute them to, or cite, any named external study, consultancy, or company report. Everything you have read informs you, but the number you output is yours."""
