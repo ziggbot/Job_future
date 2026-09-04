@@ -23,6 +23,7 @@
   --up: #e34948;        /* risk increased — warm diverging pole */
   --down: #2a78d6;      /* risk decreased — cool diverging pole */
   --accent: #2a78d6;
+  --lead: #4a3aa7;      /* expert chart: lab leaders (violet); researchers use --accent */
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -39,6 +40,7 @@
     --up: #e66767;
     --down: #3987e5;
     --accent: #3987e5;
+    --lead: #9085e9;
   }
 }
 * { box-sizing: border-box; }
@@ -180,6 +182,43 @@ footer a { color: var(--accent); text-decoration: none; }
   background: var(--ink); color: var(--page); font-size: 12px; font-weight: 600;
   padding: 4px 8px; border-radius: 6px; white-space: nowrap;
 }
+.tooltip.wide { white-space: normal; max-width: 340px; font-weight: 400; line-height: 1.45; }
+.tooltip.wide b { font-weight: 700; }
+
+/* ---------- expert timeline ---------- */
+.echart {
+  border: 1px solid var(--border); border-radius: 12px; background: var(--surface);
+  padding: 14px 18px 8px; overflow-x: auto; margin: 14px 0 10px;
+}
+.echart-inner { min-width: 680px; }
+.elegend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12px; color: var(--ink-2); padding: 2px 0 10px; }
+.elegend .sw { display: inline-block; vertical-align: -1px; margin-right: 5px; }
+.eaxis { display: flex; height: 22px; }
+.eaxis .who { width: 200px; flex: none; }
+.eaxis .etrack { height: 22px; }
+.eaxis span { position: absolute; transform: translateX(-50%); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; top: 2px; }
+.erow { display: flex; align-items: center; border-top: 1px solid var(--grid); }
+.erow .who { width: 200px; flex: none; padding: 7px 12px 7px 0; }
+.erow .who .nm { font-size: 13px; font-weight: 650; line-height: 1.2; }
+.erow .who .rl { font-size: 10.5px; color: var(--muted); }
+.etrack { position: relative; flex: 1; height: 42px; }
+.egrid { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--grid); }
+.enow { position: absolute; top: 0; bottom: 0; width: 0; border-left: 1px dashed var(--baseline); }
+.ebar { position: absolute; top: 50%; height: 8px; transform: translateY(-50%); border-radius: 4px; opacity: .9; }
+.edot, .ediam { position: absolute; top: 50%; width: 11px; height: 11px; border: 2px solid var(--surface); box-sizing: content-box; }
+.edot { transform: translate(-50%, -50%); border-radius: 50%; }
+.ediam { transform: translate(-50%, -50%) rotate(45deg); border-radius: 2px; }
+.eopen { position: absolute; top: 50%; height: 8px; transform: translateY(-50%); border-radius: 4px 0 0 4px; }
+.eopen::after { content: "beyond ›"; position: absolute; left: 100%; top: 50%; transform: translate(6px, -50%); font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+.enodate { position: absolute; top: 50%; left: 0; right: 0; border-top: 2px dashed var(--baseline); }
+.enodate-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--surface); padding: 0 8px; font-size: 11px; font-style: italic; color: var(--muted); white-space: nowrap; }
+.esrc { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+.esrc summary { cursor: pointer; }
+.esrc a { color: var(--accent); text-decoration: none; }
+.etable { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+.etable th, .etable td { text-align: left; padding: 7px 10px; border-top: 1px solid var(--grid); vertical-align: top; color: var(--ink-2); }
+.etable th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; border-top: 0; }
+.etable td:first-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -200,6 +239,36 @@ footer a { color: var(--accent); text-decoration: none; }
   <div id="app">
     <div class="loading" id="loading">Loading this week's forecast…</div>
   </div>
+
+  <section class="prose" id="humans">
+    <h3>Where the humans put it</h3>
+    <p>The index above is the AI's own answer. For calibration: here is where the most prominent
+    researchers and lab leaders currently place the arrival of human-level AI (<b>●</b>) and
+    superintelligence (<b>◆</b>), based on their latest public statements. Hover a row for their
+    background and exact claim. Definitions differ between people — that is half the story.</p>
+    <div class="echart">
+      <div class="echart-inner" id="expert-chart"></div>
+    </div>
+    <details class="esrc">
+      <summary>View as table</summary>
+      <div id="expert-table"></div>
+    </details>
+    <details class="esrc">
+      <summary>Sources for this panel</summary>
+      <p style="max-width:none">
+        <a href="https://fortune.com/2025/12/28/geoffrey-hinton-godfather-of-ai-2026-prediction-human-worker-replacement/" rel="noopener">Hinton (Fortune)</a> ·
+        <a href="https://www.faf.ae/home/2026/1/28/what-yoshua-bengio-warned-at-davos-2026-why-super-smart-ai-could-be-dangerous" rel="noopener">Bengio (Davos 2026)</a> ·
+        <a href="https://www.brown.edu/news/2026-04-01/yann-lecun-artificial-intelligence-pioneer" rel="noopener">LeCun (Brown)</a> ·
+        <a href="https://sherwood.news/tech/google-deepminds-hassabis-agi-is-3-to-4-years-away/" rel="noopener">Hassabis (Sherwood)</a> ·
+        <a href="https://unscarcity.ai/a/agi-timeline-2026-predictions" rel="noopener">Altman / Amodei / Hassabis (Unscarcity)</a> ·
+        <a href="https://en.wikipedia.org/wiki/The_Singularity_Is_Nearer" rel="noopener">Kurzweil</a> ·
+        <a href="https://futuresearch.ai/blog/ai-2027-6-months-later/" rel="noopener">Kokotajlo / Karpathy / Legg (FutureSearch)</a> ·
+        <a href="https://80000hours.org/podcast/episodes/2026-agi-timelines/" rel="noopener">80,000 Hours: AGI timelines 2026</a>
+      </p>
+      <p style="max-width:none">Unlike the index itself, this panel is human-curated editorial context and cites its sources.
+      The AI's own forecast above remains citation-free by design.</p>
+    </details>
+  </section>
 
   <section class="prose" id="methodology">
     <h3>How these numbers are made</h3>
@@ -452,6 +521,102 @@ footer a { color: var(--accent); text-decoration: none; }
       if (el) { el.classList.add("open"); el.scrollIntoView({ block: "center" }); }
     }
   }
+
+  // ---------- expert timeline panel (hand-curated editorial content) ----------
+  // kind: "agi" = human-level AI (circle), "si" = superintelligence/singularity (diamond)
+  const EXPERTS = [
+    { name: "Dario Amodei", role: "lead", who: "CEO Anthropic, ex-OpenAI research lead",
+      claim: "“Powerful AI” — better than almost all humans at almost everything — in late 2026 or 2027; stated even in a formal White House policy filing.",
+      marks: [{ t: "range", k: "agi", a: 2026.6, b: 2028 }] },
+    { name: "Sam Altman", role: "lead", who: "CEO OpenAI",
+      claim: "AGI within the current US presidential term; superintelligence “a few thousand days” out (~2027–2031). Note: definitions shift between statements.",
+      marks: [{ t: "range", k: "si", a: 2027, b: 2031 }] },
+    { name: "Shane Legg", role: "res", who: "DeepMind co-founder; effectively coined “AGI”",
+      claim: "~50% odds of minimal AGI by 2028 — a forecast he has held unchanged since 2009, the most stable in the field.",
+      marks: [{ t: "dot", k: "agi", a: 2028 }] },
+    { name: "Yoshua Bengio", role: "res", who: "Turing Award; Mila; founder of LawZero",
+      claim: "AGI 2028–2043 (90% confidence interval). Davos 2026: smarter-than-human AI possible within ~5 years, with existential risk within 10 if uncontrolled.",
+      marks: [{ t: "range", k: "agi", a: 2028, b: 2043 }] },
+    { name: "Ray Kurzweil", role: "res", who: "Futurist & inventor, Google; The Singularity Is Nearer",
+      claim: "AGI by 2029, the Singularity — human–AI merger — by 2045. Unchanged since 2005, and the field has drifted toward him.",
+      marks: [{ t: "dot", k: "agi", a: 2029 }, { t: "dot", k: "si", a: 2045 }] },
+    { name: "Daniel Kokotajlo", role: "res", who: "Ex-OpenAI; lead author of AI 2027",
+      claim: "Median slipped from 2028 to 2029, then “into the 2030s” — he updates publicly as evidence arrives.",
+      marks: [{ t: "range", k: "agi", a: 2029, b: 2034 }] },
+    { name: "Demis Hassabis", role: "lead", who: "CEO Google DeepMind; Nobel laureate (AlphaFold)",
+      claim: "Davos 2026: roughly a 50% chance of AGI by the end of the decade — one or two AlphaGo-scale breakthroughs still required; scaling alone won't do it.",
+      marks: [{ t: "dot", k: "agi", a: 2030 }] },
+    { name: "Geoffrey Hinton", role: "res", who: "“Godfather of AI”; Turing Award; Nobel in Physics",
+      claim: "50% probability of smarter-than-human AI within ~4–19 years; the window to solve alignment is “a few years, not decades”.",
+      marks: [{ t: "range", k: "si", a: 2030, b: 2045 }] },
+    { name: "Andrej Karpathy", role: "res", who: "Ex-OpenAI; ex-Tesla AI director",
+      claim: "“The decade of agents, not the year of agents” — roughly ten years to make them actually work; argues against a fast coding-agent takeoff.",
+      marks: [{ t: "dot", k: "agi", a: 2035 }] },
+    { name: "Yann LeCun", role: "res", who: "Turing Award; left Meta to build world-model AI",
+      claim: "LLM scaling won't get there. “At the very best, we might be convinced we're on a good path towards human intelligence — not yet at it — within five years.”",
+      marks: [{ t: "open", k: "agi", a: 2031 }] },
+    { name: "Ilya Sutskever", role: "res", who: "Founder Safe Superintelligence Inc.; ex-OpenAI chief scientist",
+      claim: "“I'm not saying how, and I'm not saying when.” No date — but the company exists on the premise that superintelligence is close enough to be the only focus.",
+      marks: [{ t: "nodate", k: "si" }] },
+  ];
+
+  function renderExperts() {
+    const el = document.getElementById("expert-chart");
+    if (!el) return;
+    const Y0 = 2026, Y1 = 2046;
+    const x = yr => Math.max(0, Math.min(100, (yr - Y0) / (Y1 - Y0) * 100));
+    const roleColor = r => r === "lead" ? "var(--lead)" : "var(--accent)";
+    const roleName = r => r === "lead" ? "lab leader" : "researcher";
+    const nowYr = new Date().getFullYear() + (new Date().getMonth() + 0.5) / 12;
+    const gridYears = [2030, 2035, 2040, 2045];
+    const grids = gridYears.map(y => `<div class="egrid" style="left:${x(y)}%"></div>`).join("") +
+                  `<div class="enow" style="left:${x(nowYr)}%"></div>`;
+
+    el.innerHTML = `
+      <div class="elegend">
+        <span><span class="sw" style="width:10px;height:10px;border-radius:50%;background:var(--accent)"></span>human-level AI (AGI)</span>
+        <span><span class="sw" style="width:9px;height:9px;border-radius:2px;transform:rotate(45deg);background:var(--accent)"></span>superintelligence / singularity</span>
+        <span><span class="sw" style="width:18px;height:7px;border-radius:4px;background:var(--accent)"></span>stated range</span>
+        <span style="color:var(--accent);font-weight:600">researchers</span>
+        <span style="color:var(--lead);font-weight:600">lab leaders</span>
+        <span style="color:var(--muted)">┊ today</span>
+      </div>
+      <div class="eaxis"><div class="who"></div><div class="etrack">
+        ${gridYears.map(y => `<span style="left:${x(y)}%">${y}</span>`).join("")}
+      </div></div>
+      ${EXPERTS.map((e, i) => {
+        const c = roleColor(e.role);
+        const marks = e.marks.map(m => {
+          if (m.t === "range") return `<div class="ebar" style="left:${x(m.a)}%;width:${x(m.b) - x(m.a)}%;background:${c}"></div>`;
+          if (m.t === "dot") return `<div class="${m.k === "si" ? "ediam" : "edot"}" style="left:${x(m.a)}%;background:${c}"></div>`;
+          if (m.t === "open") return `<div class="eopen" style="left:${x(m.a)}%;width:${92 - x(m.a)}%;background:linear-gradient(90deg, ${c}, transparent)"></div>`;
+          return `<div class="enodate"></div><div class="enodate-label">declines to name a date</div>`;
+        }).join("");
+        return `<div class="erow" data-i="${i}">
+          <div class="who"><div class="nm" style="color:${c}">${esc(e.name)}</div><div class="rl">${roleName(e.role)}</div></div>
+          <div class="etrack">${grids}${marks}</div>
+        </div>`;
+      }).join("")}`;
+
+    el.querySelectorAll(".erow").forEach(r => {
+      const e = EXPERTS[+r.dataset.i];
+      r.addEventListener("mousemove", ev => {
+        tooltip.classList.add("wide");
+        tooltip.innerHTML = `<b>${esc(e.name)}</b> — ${esc(e.who)}<br>${esc(e.claim)}`;
+        tooltip.style.display = "block";
+        tooltip.style.left = Math.min(ev.clientX + 14, window.innerWidth - 360) + "px";
+        tooltip.style.top = (ev.clientY - 20) + "px";
+      });
+      r.addEventListener("mouseleave", () => { tooltip.style.display = "none"; tooltip.classList.remove("wide"); });
+    });
+
+    document.getElementById("expert-table").innerHTML = `
+      <table class="etable">
+        <tr><th>Name</th><th>Background</th><th>Latest assessment</th></tr>
+        ${EXPERTS.map(e => `<tr><td>${esc(e.name)}</td><td>${esc(e.who)}</td><td>${esc(e.claim)}</td></tr>`).join("")}
+      </table>`;
+  }
+  renderExperts();
 
   // bar colors are inlined at render time — re-render when the color scheme flips
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => latest && render());
