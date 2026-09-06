@@ -2,7 +2,7 @@
  "week": "2026-W27",
  "generated_at": "2026-07-05T19:57:51Z",
  "model": "inaugural seed edition (hand-authored during setup; automated weekly runs use the configured OpenAI model from week 2)",
- "methodology_version": 1,
+ "methodology_version": 2,
  "ensemble_size": 1,
  "headline": "In my first public forecast, I give telemarketers 88% odds of majority-automation by 2030 — and plumbers 4%.",
  "summary": "This is the inaugural edition of the index — my baseline, set before weekly evidence starts moving the numbers. The pattern in my estimates is consistent: language-and-screen work automates first, licensed and embodied work last. I expect the most movement in the coming months in transport and creative categories, where deployment news arrives fastest.",
@@ -13,6 +13,11 @@
    "id": "telemarketers",
    "name": "Telemarketers",
    "group": "Office & Administrative",
+   "can_now": 0.9,
+   "blockers": [
+    "deployment & integration",
+    "social acceptance"
+   ],
    "p2027": 0.6,
    "p2030": 0.88,
    "p2035": 0.94,
@@ -27,6 +32,10 @@
    "id": "data-entry-clerks",
    "name": "Data Entry Clerks",
    "group": "Office & Administrative",
+   "can_now": 0.92,
+   "blockers": [
+    "deployment & integration"
+   ],
    "p2027": 0.55,
    "p2030": 0.85,
    "p2035": 0.93,
@@ -41,6 +50,10 @@
    "id": "medical-transcriptionists",
    "name": "Medical Transcriptionists & Coders",
    "group": "Healthcare",
+   "can_now": 0.9,
+   "blockers": [
+    "deployment & integration"
+   ],
    "p2027": 0.55,
    "p2030": 0.85,
    "p2035": 0.92,
@@ -55,6 +68,10 @@
    "id": "translators",
    "name": "Translators & Interpreters",
    "group": "Creative & Media",
+   "can_now": 0.88,
+   "blockers": [
+    "human trust & relationships"
+   ],
    "p2027": 0.45,
    "p2030": 0.78,
    "p2035": 0.88,
@@ -69,6 +86,11 @@
    "id": "customer-service-reps",
    "name": "Customer Service Representatives",
    "group": "Office & Administrative",
+   "can_now": 0.78,
+   "blockers": [
+    "deployment & integration",
+    "human trust & relationships"
+   ],
    "p2027": 0.4,
    "p2030": 0.75,
    "p2035": 0.88,
@@ -83,6 +105,10 @@
    "id": "stock-photographers",
    "name": "Stock & Product Photographers",
    "group": "Creative & Media",
+   "can_now": 0.85,
+   "blockers": [
+    "taste & originality"
+   ],
    "p2027": 0.45,
    "p2030": 0.75,
    "p2035": 0.85,
@@ -97,6 +123,11 @@
    "id": "insurance-claims-processors",
    "name": "Insurance Claims Processors",
    "group": "Office & Administrative",
+   "can_now": 0.72,
+   "blockers": [
+    "liability & accountability",
+    "deployment & integration"
+   ],
    "p2027": 0.4,
    "p2030": 0.72,
    "p2035": 0.85,
@@ -111,6 +142,10 @@
    "id": "copywriters",
    "name": "Copywriters & Content Writers",
    "group": "Creative & Media",
+   "can_now": 0.8,
+   "blockers": [
+    "taste & originality"
+   ],
    "p2027": 0.4,
    "p2030": 0.72,
    "p2035": 0.84,
@@ -125,6 +160,11 @@
    "id": "bookkeepers",
    "name": "Bookkeepers & Payroll Clerks",
    "group": "Office & Administrative",
+   "can_now": 0.75,
+   "blockers": [
+    "liability & accountability",
+    "deployment & integration"
+   ],
    "p2027": 0.35,
    "p2030": 0.7,
    "p2035": 0.85,
@@ -139,6 +179,11 @@
    "id": "voice-actors",
    "name": "Voice Actors & Narrators",
    "group": "Creative & Media",
+   "can_now": 0.8,
+   "blockers": [
+    "social acceptance",
+    "taste & originality"
+   ],
    "p2027": 0.4,
    "p2030": 0.7,
    "p2035": 0.82,
@@ -153,6 +198,11 @@
    "id": "qa-testers",
    "name": "QA & Software Testers",
    "group": "Technology",
+   "can_now": 0.7,
+   "blockers": [
+    "long-horizon autonomy",
+    "deployment & integration"
+   ],
    "p2027": 0.35,
    "p2030": 0.68,
    "p2035": 0.82,
@@ -167,6 +217,11 @@
    "id": "tax-preparers",
    "name": "Tax Preparers",
    "group": "Finance",
+   "can_now": 0.75,
+   "blockers": [
+    "regulation & licensing",
+    "liability & accountability"
+   ],
    "p2027": 0.35,
    "p2030": 0.68,
    "p2035": 0.82,
@@ -181,6 +236,11 @@
    "id": "travel-agents",
    "name": "Travel Agents",
    "group": "Sales & Service",
+   "can_now": 0.8,
+   "blockers": [
+    "human trust & relationships",
+    "deployment & integration"
+   ],
    "p2027": 0.4,
    "p2030": 0.68,
    "p2035": 0.78,
@@ -195,6 +255,11 @@
    "id": "it-support",
    "name": "IT Support & Help Desk",
    "group": "Technology",
+   "can_now": 0.68,
+   "blockers": [
+    "physical embodiment",
+    "deployment & integration"
+   ],
    "p2027": 0.35,
    "p2030": 0.65,
    "p2035": 0.8,
@@ -209,6 +274,11 @@
    "id": "paralegals",
    "name": "Paralegals & Legal Assistants",
    "group": "Legal",
+   "can_now": 0.7,
+   "blockers": [
+    "regulation & licensing",
+    "liability & accountability"
+   ],
    "p2027": 0.3,
    "p2030": 0.62,
    "p2035": 0.8,
@@ -223,6 +293,11 @@
    "id": "contract-lawyers",
    "name": "Contract & Document-Review Lawyers",
    "group": "Legal",
+   "can_now": 0.65,
+   "blockers": [
+    "regulation & licensing",
+    "liability & accountability"
+   ],
    "p2027": 0.3,
    "p2030": 0.6,
    "p2035": 0.78,
@@ -237,6 +312,11 @@
    "id": "loan-officers",
    "name": "Loan Officers & Underwriters",
    "group": "Finance",
+   "can_now": 0.65,
+   "blockers": [
+    "regulation & licensing",
+    "liability & accountability"
+   ],
    "p2027": 0.3,
    "p2030": 0.6,
    "p2035": 0.76,
@@ -251,6 +331,10 @@
    "id": "illustrators",
    "name": "Illustrators & Concept Artists",
    "group": "Creative & Media",
+   "can_now": 0.7,
+   "blockers": [
+    "taste & originality"
+   ],
    "p2027": 0.35,
    "p2030": 0.6,
    "p2035": 0.75,
@@ -265,6 +349,11 @@
    "id": "hr-recruiters",
    "name": "Recruiters & HR Screeners",
    "group": "Office & Administrative",
+   "can_now": 0.65,
+   "blockers": [
+    "human trust & relationships",
+    "liability & accountability"
+   ],
    "p2027": 0.3,
    "p2030": 0.6,
    "p2035": 0.75,
@@ -279,6 +368,11 @@
    "id": "web-designers",
    "name": "Web & UI Designers",
    "group": "Technology",
+   "can_now": 0.7,
+   "blockers": [
+    "taste & originality",
+    "human trust & relationships"
+   ],
    "p2027": 0.3,
    "p2030": 0.6,
    "p2035": 0.75,
@@ -293,6 +387,11 @@
    "id": "graphic-designers",
    "name": "Graphic Designers",
    "group": "Creative & Media",
+   "can_now": 0.65,
+   "blockers": [
+    "taste & originality",
+    "human trust & relationships"
+   ],
    "p2027": 0.3,
    "p2030": 0.58,
    "p2035": 0.74,
@@ -307,6 +406,11 @@
    "id": "receptionists",
    "name": "Receptionists & Front Desk",
    "group": "Office & Administrative",
+   "can_now": 0.55,
+   "blockers": [
+    "physical embodiment",
+    "human trust & relationships"
+   ],
    "p2027": 0.3,
    "p2030": 0.58,
    "p2035": 0.72,
@@ -321,6 +425,11 @@
    "id": "data-analysts",
    "name": "Data Analysts",
    "group": "Technology",
+   "can_now": 0.65,
+   "blockers": [
+    "human trust & relationships",
+    "long-horizon autonomy"
+   ],
    "p2027": 0.25,
    "p2030": 0.55,
    "p2035": 0.72,
@@ -335,6 +444,11 @@
    "id": "financial-analysts",
    "name": "Financial & Investment Analysts",
    "group": "Finance",
+   "can_now": 0.6,
+   "blockers": [
+    "human trust & relationships",
+    "liability & accountability"
+   ],
    "p2027": 0.25,
    "p2030": 0.55,
    "p2035": 0.72,
@@ -349,6 +463,11 @@
    "id": "video-editors",
    "name": "Video Editors",
    "group": "Creative & Media",
+   "can_now": 0.6,
+   "blockers": [
+    "taste & originality",
+    "deployment & integration"
+   ],
    "p2027": 0.28,
    "p2030": 0.55,
    "p2035": 0.72,
@@ -363,6 +482,11 @@
    "id": "bank-tellers",
    "name": "Bank Tellers",
    "group": "Finance",
+   "can_now": 0.5,
+   "blockers": [
+    "physical embodiment",
+    "human trust & relationships"
+   ],
    "p2027": 0.3,
    "p2030": 0.55,
    "p2035": 0.68,
@@ -377,6 +501,10 @@
    "id": "corporate-trainers",
    "name": "Corporate Trainers & Course Creators",
    "group": "Education",
+   "can_now": 0.6,
+   "blockers": [
+    "human trust & relationships"
+   ],
    "p2027": 0.25,
    "p2030": 0.52,
    "p2035": 0.68,
@@ -391,6 +519,11 @@
    "id": "accountants",
    "name": "Accountants & Auditors",
    "group": "Finance",
+   "can_now": 0.6,
+   "blockers": [
+    "regulation & licensing",
+    "liability & accountability"
+   ],
    "p2027": 0.22,
    "p2030": 0.5,
    "p2035": 0.7,
@@ -405,6 +538,11 @@
    "id": "retail-cashiers",
    "name": "Retail Cashiers",
    "group": "Sales & Service",
+   "can_now": 0.45,
+   "blockers": [
+    "physical embodiment",
+    "cost of automation"
+   ],
    "p2027": 0.25,
    "p2030": 0.5,
    "p2035": 0.68,
@@ -419,6 +557,11 @@
    "id": "tutors",
    "name": "Private Tutors & Test-Prep Instructors",
    "group": "Education",
+   "can_now": 0.7,
+   "blockers": [
+    "social acceptance",
+    "human trust & relationships"
+   ],
    "p2027": 0.25,
    "p2030": 0.5,
    "p2035": 0.65,
@@ -433,6 +576,11 @@
    "id": "musicians-production",
    "name": "Session Musicians & Music Producers",
    "group": "Creative & Media",
+   "can_now": 0.55,
+   "blockers": [
+    "taste & originality",
+    "social acceptance"
+   ],
    "p2027": 0.25,
    "p2030": 0.5,
    "p2035": 0.65,
@@ -447,6 +595,11 @@
    "id": "executive-assistants",
    "name": "Executive & Admin Assistants",
    "group": "Office & Administrative",
+   "can_now": 0.6,
+   "blockers": [
+    "human trust & relationships",
+    "long-horizon autonomy"
+   ],
    "p2027": 0.22,
    "p2030": 0.48,
    "p2035": 0.66,
@@ -461,6 +614,11 @@
    "id": "sysadmins-devops",
    "name": "SysAdmins & DevOps Engineers",
    "group": "Technology",
+   "can_now": 0.55,
+   "blockers": [
+    "liability & accountability",
+    "long-horizon autonomy"
+   ],
    "p2027": 0.18,
    "p2030": 0.45,
    "p2035": 0.65,
@@ -475,6 +633,11 @@
    "id": "management-consultants",
    "name": "Management Consultants",
    "group": "Management",
+   "can_now": 0.55,
+   "blockers": [
+    "human trust & relationships",
+    "social acceptance"
+   ],
    "p2027": 0.2,
    "p2030": 0.45,
    "p2035": 0.62,
@@ -489,6 +652,11 @@
    "id": "journalists",
    "name": "Journalists & Reporters",
    "group": "Creative & Media",
+   "can_now": 0.45,
+   "blockers": [
+    "human trust & relationships",
+    "taste & originality"
+   ],
    "p2027": 0.2,
    "p2030": 0.42,
    "p2035": 0.58,
@@ -503,6 +671,11 @@
    "id": "software-developers",
    "name": "Software Developers",
    "group": "Technology",
+   "can_now": 0.55,
+   "blockers": [
+    "long-horizon autonomy",
+    "liability & accountability"
+   ],
    "p2027": 0.15,
    "p2030": 0.4,
    "p2035": 0.62,
@@ -517,6 +690,11 @@
    "id": "actuaries",
    "name": "Actuaries & Risk Analysts",
    "group": "Finance",
+   "can_now": 0.5,
+   "blockers": [
+    "regulation & licensing",
+    "liability & accountability"
+   ],
    "p2027": 0.15,
    "p2030": 0.38,
    "p2035": 0.58,
@@ -531,6 +709,11 @@
    "id": "cybersecurity-analysts",
    "name": "Cybersecurity Analysts",
    "group": "Technology",
+   "can_now": 0.45,
+   "blockers": [
+    "liability & accountability",
+    "long-horizon autonomy"
+   ],
    "p2027": 0.12,
    "p2030": 0.35,
    "p2035": 0.55,
@@ -545,6 +728,11 @@
    "id": "radiologists",
    "name": "Radiologists & Medical Imaging Diagnosticians",
    "group": "Healthcare",
+   "can_now": 0.55,
+   "blockers": [
+    "regulation & licensing",
+    "liability & accountability"
+   ],
    "p2027": 0.12,
    "p2030": 0.32,
    "p2035": 0.55,
@@ -559,6 +747,11 @@
    "id": "warehouse-workers",
    "name": "Warehouse & Fulfillment Workers",
    "group": "Transport & Logistics",
+   "can_now": 0.2,
+   "blockers": [
+    "physical embodiment",
+    "cost of automation"
+   ],
    "p2027": 0.1,
    "p2030": 0.3,
    "p2035": 0.55,
@@ -573,6 +766,11 @@
    "id": "fast-food-workers",
    "name": "Fast Food Workers",
    "group": "Sales & Service",
+   "can_now": 0.15,
+   "blockers": [
+    "physical embodiment",
+    "cost of automation"
+   ],
    "p2027": 0.12,
    "p2030": 0.3,
    "p2035": 0.52,
@@ -587,6 +785,11 @@
    "id": "middle-managers",
    "name": "Middle Managers & Project Managers",
    "group": "Management",
+   "can_now": 0.45,
+   "blockers": [
+    "human trust & relationships",
+    "liability & accountability"
+   ],
    "p2027": 0.12,
    "p2030": 0.3,
    "p2035": 0.48,
@@ -601,6 +804,11 @@
    "id": "taxi-rideshare-drivers",
    "name": "Taxi & Rideshare Drivers",
    "group": "Transport & Logistics",
+   "can_now": 0.18,
+   "blockers": [
+    "physical embodiment",
+    "regulation & licensing"
+   ],
    "p2027": 0.08,
    "p2030": 0.28,
    "p2035": 0.55,
@@ -615,6 +823,11 @@
    "id": "lab-technicians",
    "name": "Laboratory Technicians",
    "group": "Science & Engineering",
+   "can_now": 0.25,
+   "blockers": [
+    "physical embodiment",
+    "deployment & integration"
+   ],
    "p2027": 0.1,
    "p2030": 0.28,
    "p2035": 0.48,
@@ -629,6 +842,10 @@
    "id": "sales-reps-b2b",
    "name": "B2B Sales Representatives",
    "group": "Sales & Service",
+   "can_now": 0.35,
+   "blockers": [
+    "human trust & relationships"
+   ],
    "p2027": 0.1,
    "p2030": 0.28,
    "p2035": 0.45,
@@ -643,6 +860,11 @@
    "id": "architects",
    "name": "Architects",
    "group": "Science & Engineering",
+   "can_now": 0.4,
+   "blockers": [
+    "regulation & licensing",
+    "human trust & relationships"
+   ],
    "p2027": 0.1,
    "p2030": 0.26,
    "p2035": 0.44,
@@ -657,6 +879,11 @@
    "id": "assembly-line-workers",
    "name": "Assembly Line & Factory Workers",
    "group": "Manufacturing & Trades",
+   "can_now": 0.25,
+   "blockers": [
+    "physical embodiment",
+    "cost of automation"
+   ],
    "p2027": 0.08,
    "p2030": 0.25,
    "p2035": 0.48,
@@ -671,6 +898,11 @@
    "id": "pharmacists",
    "name": "Pharmacists (dispensing)",
    "group": "Healthcare",
+   "can_now": 0.4,
+   "blockers": [
+    "regulation & licensing",
+    "physical embodiment"
+   ],
    "p2027": 0.1,
    "p2030": 0.25,
    "p2035": 0.42,
@@ -685,6 +917,11 @@
    "id": "real-estate-agents",
    "name": "Real Estate Agents",
    "group": "Sales & Service",
+   "can_now": 0.35,
+   "blockers": [
+    "human trust & relationships",
+    "physical embodiment"
+   ],
    "p2027": 0.1,
    "p2030": 0.25,
    "p2035": 0.4,
@@ -699,6 +936,11 @@
    "id": "truck-drivers",
    "name": "Long-Haul Truck Drivers",
    "group": "Transport & Logistics",
+   "can_now": 0.15,
+   "blockers": [
+    "physical embodiment",
+    "regulation & licensing"
+   ],
    "p2027": 0.06,
    "p2030": 0.22,
    "p2035": 0.48,
@@ -713,6 +955,11 @@
    "id": "civil-mechanical-engineers",
    "name": "Civil & Mechanical Engineers",
    "group": "Science & Engineering",
+   "can_now": 0.4,
+   "blockers": [
+    "regulation & licensing",
+    "liability & accountability"
+   ],
    "p2027": 0.08,
    "p2030": 0.22,
    "p2035": 0.4,
@@ -727,6 +974,11 @@
    "id": "research-scientists",
    "name": "Research Scientists",
    "group": "Science & Engineering",
+   "can_now": 0.35,
+   "blockers": [
+    "physical embodiment",
+    "long-horizon autonomy"
+   ],
    "p2027": 0.08,
    "p2030": 0.22,
    "p2035": 0.4,
@@ -741,6 +993,11 @@
    "id": "delivery-couriers",
    "name": "Delivery & Courier Drivers",
    "group": "Transport & Logistics",
+   "can_now": 0.12,
+   "blockers": [
+    "physical embodiment",
+    "cost of automation"
+   ],
    "p2027": 0.06,
    "p2030": 0.2,
    "p2035": 0.42,
@@ -755,6 +1012,11 @@
    "id": "university-lecturers",
    "name": "University Lecturers",
    "group": "Education",
+   "can_now": 0.35,
+   "blockers": [
+    "social acceptance",
+    "human trust & relationships"
+   ],
    "p2027": 0.08,
    "p2030": 0.2,
    "p2035": 0.35,
@@ -769,6 +1031,12 @@
    "id": "general-practitioners",
    "name": "General Practitioners (diagnosis & triage)",
    "group": "Healthcare",
+   "can_now": 0.4,
+   "blockers": [
+    "regulation & licensing",
+    "human trust & relationships",
+    "liability & accountability"
+   ],
    "p2027": 0.06,
    "p2030": 0.18,
    "p2035": 0.35,
@@ -783,6 +1051,11 @@
    "id": "welders-machinists",
    "name": "Welders & Machinists",
    "group": "Manufacturing & Trades",
+   "can_now": 0.12,
+   "blockers": [
+    "physical embodiment",
+    "cost of automation"
+   ],
    "p2027": 0.05,
    "p2030": 0.15,
    "p2035": 0.32,
@@ -797,6 +1070,11 @@
    "id": "baristas-waitstaff",
    "name": "Baristas & Waitstaff",
    "group": "Sales & Service",
+   "can_now": 0.08,
+   "blockers": [
+    "physical embodiment",
+    "social acceptance"
+   ],
    "p2027": 0.06,
    "p2030": 0.15,
    "p2035": 0.3,
@@ -811,6 +1089,11 @@
    "id": "farmers-agricultural",
    "name": "Farm & Agricultural Workers",
    "group": "Manufacturing & Trades",
+   "can_now": 0.1,
+   "blockers": [
+    "physical embodiment",
+    "cost of automation"
+   ],
    "p2027": 0.05,
    "p2030": 0.14,
    "p2035": 0.3,
@@ -825,6 +1108,12 @@
    "id": "teachers-k12",
    "name": "K-12 Teachers",
    "group": "Education",
+   "can_now": 0.25,
+   "blockers": [
+    "social acceptance",
+    "human trust & relationships",
+    "physical embodiment"
+   ],
    "p2027": 0.04,
    "p2030": 0.1,
    "p2035": 0.2,
@@ -839,6 +1128,11 @@
    "id": "therapists-counselors",
    "name": "Therapists & Mental Health Counselors",
    "group": "Healthcare",
+   "can_now": 0.3,
+   "blockers": [
+    "regulation & licensing",
+    "human trust & relationships"
+   ],
    "p2027": 0.04,
    "p2030": 0.1,
    "p2035": 0.2,
@@ -853,6 +1147,11 @@
    "id": "construction-workers",
    "name": "Construction Workers",
    "group": "Manufacturing & Trades",
+   "can_now": 0.05,
+   "blockers": [
+    "physical embodiment",
+    "cost of automation"
+   ],
    "p2027": 0.03,
    "p2030": 0.08,
    "p2035": 0.2,
@@ -867,6 +1166,12 @@
    "id": "trial-lawyers",
    "name": "Trial & Courtroom Lawyers",
    "group": "Legal",
+   "can_now": 0.15,
+   "blockers": [
+    "regulation & licensing",
+    "physical embodiment",
+    "human trust & relationships"
+   ],
    "p2027": 0.02,
    "p2030": 0.08,
    "p2035": 0.18,
@@ -881,6 +1186,11 @@
    "id": "social-workers",
    "name": "Social Workers",
    "group": "Public & Social",
+   "can_now": 0.15,
+   "blockers": [
+    "human trust & relationships",
+    "regulation & licensing"
+   ],
    "p2027": 0.02,
    "p2030": 0.06,
    "p2035": 0.14,
@@ -895,6 +1205,12 @@
    "id": "ceos-executives",
    "name": "CEOs & Senior Executives",
    "group": "Management",
+   "can_now": 0.2,
+   "blockers": [
+    "liability & accountability",
+    "human trust & relationships",
+    "social acceptance"
+   ],
    "p2027": 0.02,
    "p2030": 0.06,
    "p2035": 0.12,
@@ -909,6 +1225,11 @@
    "id": "electricians",
    "name": "Electricians",
    "group": "Manufacturing & Trades",
+   "can_now": 0.04,
+   "blockers": [
+    "physical embodiment",
+    "regulation & licensing"
+   ],
    "p2027": 0.02,
    "p2030": 0.05,
    "p2035": 0.12,
@@ -923,6 +1244,11 @@
    "id": "nurses",
    "name": "Nurses & Bedside Care",
    "group": "Healthcare",
+   "can_now": 0.08,
+   "blockers": [
+    "physical embodiment",
+    "human trust & relationships"
+   ],
    "p2027": 0.02,
    "p2030": 0.05,
    "p2035": 0.12,
@@ -937,6 +1263,11 @@
    "id": "surgeons",
    "name": "Surgeons",
    "group": "Healthcare",
+   "can_now": 0.05,
+   "blockers": [
+    "physical embodiment",
+    "regulation & licensing"
+   ],
    "p2027": 0.01,
    "p2030": 0.04,
    "p2035": 0.12,
@@ -951,6 +1282,10 @@
    "id": "plumbers",
    "name": "Plumbers & HVAC Technicians",
    "group": "Manufacturing & Trades",
+   "can_now": 0.03,
+   "blockers": [
+    "physical embodiment"
+   ],
    "p2027": 0.01,
    "p2030": 0.04,
    "p2035": 0.1,
@@ -965,6 +1300,12 @@
    "id": "police-officers",
    "name": "Police Officers",
    "group": "Public & Social",
+   "can_now": 0.06,
+   "blockers": [
+    "physical embodiment",
+    "regulation & licensing",
+    "human trust & relationships"
+   ],
    "p2027": 0.01,
    "p2030": 0.04,
    "p2035": 0.1,
@@ -979,6 +1320,11 @@
    "id": "hairdressers",
    "name": "Hairdressers & Barbers",
    "group": "Sales & Service",
+   "can_now": 0.02,
+   "blockers": [
+    "physical embodiment",
+    "social acceptance"
+   ],
    "p2027": 0.02,
    "p2030": 0.04,
    "p2035": 0.08,
@@ -993,6 +1339,11 @@
    "id": "airline-pilots",
    "name": "Airline Pilots",
    "group": "Transport & Logistics",
+   "can_now": 0.1,
+   "blockers": [
+    "regulation & licensing",
+    "social acceptance"
+   ],
    "p2027": 0.01,
    "p2030": 0.03,
    "p2035": 0.08,
@@ -1007,6 +1358,12 @@
    "id": "childcare-workers",
    "name": "Childcare Workers",
    "group": "Public & Social",
+   "can_now": 0.02,
+   "blockers": [
+    "physical embodiment",
+    "human trust & relationships",
+    "social acceptance"
+   ],
    "p2027": 0.01,
    "p2030": 0.03,
    "p2035": 0.07,
@@ -1021,6 +1378,10 @@
    "id": "firefighters",
    "name": "Firefighters & Emergency Responders",
    "group": "Public & Social",
+   "can_now": 0.02,
+   "blockers": [
+    "physical embodiment"
+   ],
    "p2027": 0.01,
    "p2030": 0.02,
    "p2035": 0.06,
@@ -1035,6 +1396,11 @@
    "id": "clergy",
    "name": "Clergy & Religious Leaders",
    "group": "Public & Social",
+   "can_now": 0.05,
+   "blockers": [
+    "social acceptance",
+    "human trust & relationships"
+   ],
    "p2027": 0.01,
    "p2030": 0.02,
    "p2035": 0.04,
@@ -1045,5 +1411,6 @@
    "rank": 74,
    "rank_delta": null
   }
- ]
+ ],
+ "capability_index": 0.44
 }

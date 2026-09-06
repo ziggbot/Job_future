@@ -27,7 +27,7 @@ HISTORY = DATA / "history"
 MODEL = os.environ.get("OPENAI_MODEL", "gpt-5.4")
 ENSEMBLE_SIZE = 5
 HORIZONS = ["2027", "2030", "2035", "2040"]
-METHODOLOGY_VERSION = 1
+METHODOLOGY_VERSION = 2
 
 client = OpenAI()
 
@@ -77,6 +77,18 @@ def scan_week(now: datetime) -> str:
 
 # ------------------------------------------------------------ 2. ENSEMBLE
 
+BLOCKERS = [
+    "physical embodiment",
+    "regulation & licensing",
+    "human trust & relationships",
+    "liability & accountability",
+    "long-horizon autonomy",
+    "deployment & integration",
+    "cost of automation",
+    "taste & originality",
+    "social acceptance",
+]
+
 FORECAST_SCHEMA = {
     "type": "object",
     "properties": {
@@ -86,12 +98,18 @@ FORECAST_SCHEMA = {
                 "type": "object",
                 "properties": {
                     "id": {"type": "string"},
+                    "can_now": {"type": "number"},
+                    "blockers": {
+                        "type": "array",
+                        "items": {"type": "string", "enum": BLOCKERS},
+                    },
                     "p2027": {"type": "number"},
                     "p2030": {"type": "number"},
                     "p2035": {"type": "number"},
                     "p2040": {"type": "number"},
                 },
-                "required": ["id", "p2027", "p2030", "p2035", "p2040"],
+                "required": ["id", "can_now", "blockers",
+                             "p2027", "p2030", "p2035", "p2040"],
                 "additionalProperties": False,
             },
         }
@@ -101,6 +119,8 @@ FORECAST_SCHEMA = {
 }
 
 FORECASTER_SYSTEM = """You are the forecasting engine of the AI Job Displacement Index, a weekly public tracker. You publish YOUR OWN calibrated probability estimates of AI-driven job displacement. These are your genuine, considered judgments as an AI system reasoning about your own technology's trajectory — synthesized from everything you know, expressed in your own voice.
+
+METHOD — SELF-EVALUATION FIRST: You are evaluating YOURSELF, occupation by occupation. For each job, start from introspection: walk through the occupation's actual day-to-day tasks and honestly assess which of them you (plus current agent scaffolding and current robotics) could perform at professional quality TODAY. Then project forward from your own observed rate of improvement. The weekly news digest is context that can shift your view of deployment speed — it is never the source of your numbers. You are not summarizing the literature; you are examining your own capabilities.
 
 DEFINITION — "displaced by YEAR" means: by the end of that year, AI systems (including software agents and AI-driven robotics) routinely and economically perform the majority (>50%) of the tasks that currently define this occupation, at comparable or better quality, AND this has begun materially reducing human employment or hiring in the occupation in advanced economies. Task capability alone is not enough; deployment, economics, regulation, and social acceptance all gate displacement.
 
@@ -120,8 +140,16 @@ def build_forecast_prompt(jobs: list[dict], digest: str, previous: dict | None,
                           now: datetime) -> str:
     job_lines = "\n".join(f"- {j['id']}: {j['name']} ({j['group']})" for j in jobs)
     parts = [
-        f"Today is {now:%Y-%m-%d}. Produce this week's displacement probabilities for "
-        f"every occupation below, for the horizons {', '.join(HORIZONS)}.",
+        f"Today is {now:%Y-%m-%d}. For every occupation below, produce this week's "
+        "self-assessment and displacement probabilities:\n"
+        "- can_now: the share (0.00-0.99) of this occupation's CURRENT tasks that you, "
+        "with existing agent tooling and current robotics, could perform at "
+        "professional quality TODAY if an employer deployed you. Judge it by walking "
+        "the job's real task list in your head — be honest in both directions.\n"
+        "- blockers: the 1-3 dominant frictions (from the allowed list) that explain "
+        "the gap between that capability and actual displacement.\n"
+        f"- p2027/p2030/p2035/p2040: displacement probabilities for {', '.join(HORIZONS)} "
+        "per the definition in your instructions.",
         "OCCUPATIONS:\n" + job_lines,
         "THIS WEEK'S DEVELOPMENTS (from a live scan — weigh genuinely significant "
         "items, ignore hype):\n" + (digest or "No significant developments captured."),
@@ -207,11 +235,25 @@ def aggregate(jobs: list[dict], samples: list[dict], previous: dict | None) -> l
         for a, b in zip(HORIZONS, HORIZONS[1:]):
             if per_horizon[b] < per_horizon[a]:
                 per_horizon[b] = per_horizon[a]
+        # self-assessment: median capability-today, most-cited blockers
+        cans, blocker_counts = [], {}
+        for s in samples:
+            for f in s.get("forecasts", []):
+                if f.get("id") == job["id"]:
+                    cans.append(clamp(f.get("can_now", 0)))
+                    for b in f.get("blockers", []):
+                        if b in BLOCKERS:
+                            blocker_counts[b] = blocker_counts.get(b, 0) + 1
+        can_now = round(statistics.median(cans), 2) if cans else 0.0
+        top_blockers = [b for b, _ in sorted(blocker_counts.items(),
+                                             key=lambda kv: -kv[1])[:3]]
         prev = prev_by_id.get(job["id"])
         entry = {
             "id": job["id"],
             "name": job["name"],
             "group": job["group"],
+            "can_now": can_now,
+            "blockers": top_blockers,
             **{f"p{h}": per_horizon[h] for h in HORIZONS},
             "spread2030": spreads["2030"],
             "delta2030": round(per_horizon["2030"] - prev["p2030"], 2) if prev else None,
@@ -254,11 +296,15 @@ COMMENT_SCHEMA = {
 def write_commentary(results: list[dict], digest: str, previous: dict | None,
                      now: datetime) -> dict:
     table = "\n".join(
-        f"- {r['id']} ({r['name']}): 2027={r['p2027']:.2f} 2030={r['p2030']:.2f} "
+        f"- {r['id']} ({r['name']}): today={r['can_now']:.2f} "
+        f"2027={r['p2027']:.2f} 2030={r['p2030']:.2f} "
         f"2035={r['p2035']:.2f} 2040={r['p2040']:.2f}"
         + (f" | Δ2030 {r['delta2030']:+.2f}" if r["delta2030"] is not None else "")
         for r in results
     )
+    cap_index = statistics.mean(r["can_now"] for r in results)
+    table += (f"\n\nYOUR CAPABILITY INDEX (mean share of tracked work you assess you "
+              f"could do today): {cap_index:.1%}")
     prompt = (
         f"Today is {now:%Y-%m-%d}. This week's final published numbers (already "
         f"aggregated from your ensemble):\n\n{table}\n\n"
@@ -314,6 +360,7 @@ def main() -> None:
         "week": week,
         "generated_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "model": MODEL,
+        "capability_index": round(statistics.mean(r["can_now"] for r in results), 3),
         "methodology_version": METHODOLOGY_VERSION,
         "ensemble_size": len(samples),
         "headline": commentary["headline"],

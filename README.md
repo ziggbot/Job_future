@@ -14,6 +14,9 @@ week, with a permanent auditable history.
 ```
 GitHub Actions (cron, Mondays 06:00 UTC)
   └─ scripts/generate_forecast.py
+       0. SELF-EXAMINE — for every job the model judges what share of its tasks it
+                      could do TODAY (can_now) and what blocks it (blockers);
+                      the mean becomes the headline capability_index
        1. SCAN      — the model web-searches the week's AI-and-work developments → digest
        2. ENSEMBLE  — 5 independent forecast runs, each producing probabilities
                       for every job × horizon (sees last week's numbers, told to

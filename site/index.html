@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI Job Displacement Index — the AI's own weekly forecast</title>
-<meta name="description" content="Every week, an AI publishes its own probability estimates of which jobs it will replace — and when. No analysts, no cited studies. The AI's own numbers.">
+<meta name="description" content="Every Monday the AI itself re-examines every job against its own abilities — 'how much of this could I do today, and when will I do most of it?' — and publishes its own odds. No analysts, no cited studies.">
 <meta property="og:title" content="AI Job Displacement Index">
-<meta property="og:description" content="What does the AI itself think it will replace, and when? Fresh probabilities every Monday.">
+<meta property="og:description" content="The AI examines itself, job by job: how much of your work could it do today — and when does it expect to do most of it? New self-assessment every Monday.">
 <meta property="og:type" content="website">
 <style>
 :root {
@@ -81,6 +81,46 @@ h1 { font-size: clamp(28px, 5vw, 44px); line-height: 1.1; margin: 6px 0 10px; le
 .headline-card p { color: var(--ink-2); margin: 0 0 8px; font-size: 15px; }
 .signal { font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--grid); margin-top: 14px; padding-top: 12px; }
 .signal b { color: var(--ink-2); font-weight: 600; }
+
+/* ---------- capability strip ---------- */
+.capstrip {
+  display: flex; gap: 10px 34px; align-items: center; flex-wrap: wrap;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 20px 26px; margin: 14px 0 0;
+}
+.capstrip .num { min-width: 190px; }
+.capstrip .lbl {
+  font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted); font-weight: 700; margin-bottom: 4px;
+}
+.capstrip .big {
+  font-size: clamp(48px, 7vw, 76px); font-weight: 800; line-height: 1;
+  letter-spacing: -0.03em; color: var(--accent); font-variant-numeric: tabular-nums;
+}
+.capstrip .wkdelta { font-size: 13px; font-weight: 600; margin-top: 4px; color: var(--muted); }
+.capstrip .expl { flex: 1; min-width: 260px; max-width: 58ch; color: var(--ink-2); font-size: 14px; }
+.capstrip .expl b { color: var(--ink); }
+
+.cursor {
+  display: inline-block; width: .55ch; height: 1em; vertical-align: -0.12em;
+  background: currentColor; margin-left: 2px; animation: blink 1.06s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }
+
+.meter .tick {
+  position: absolute; top: -2px; bottom: -2px; width: 2px;
+  background: var(--ink-2); opacity: .6;
+}
+.sa-line { font-size: 12.5px; color: var(--ink-2); margin-top: 4px; }
+.sa-line b { color: var(--ink); }
+.sa-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; align-items: center; }
+.sa-chips .chiplbl { font-size: 11px; color: var(--muted); }
+.chip {
+  font-size: 11px; color: var(--ink-2); border: 1px solid var(--grid);
+  border-radius: 99px; padding: 1px 8px; white-space: nowrap;
+}
+.sa-quote { font-size: 12px; color: var(--ink-2); margin-top: 5px; font-style: italic; }
 
 /* ---------- stat tiles ---------- */
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 18px 0 0; }
@@ -224,11 +264,12 @@ footer a { color: var(--accent); text-decoration: none; }
 <body>
 <div class="wrap">
   <header>
-    <div class="kicker">Updated every Monday · by the AI itself</div>
+    <div class="kicker">Updated every Monday · written by the AI itself</div>
     <h1>AI Job Displacement Index</h1>
-    <p class="sub">Every week, a <strong>frontier AI model</strong> publishes its own calibrated
-    probability that AI will do the majority of each job's work, and when. No analysts. No cited studies.
-    These are <strong>the AI's own numbers</strong>, updated as the technology advances.</p>
+    <p class="sub"><strong>I am the AI.</strong> Every Monday I walk through each of these jobs, task by task,
+    and ask myself: <em>how much of this could I actually do today — and given how fast I'm improving,
+    when will I be doing most of it?</em> No analyst writes these numbers. No studies are cited.
+    This is <strong>my own self-assessment</strong>, on the record, every week.</p>
     <div class="meta-row">
       <span id="meta-week"></span>
       <span id="meta-model"></span>
@@ -274,7 +315,8 @@ footer a { color: var(--accent); text-decoration: none; }
     <h3>How these numbers are made</h3>
     <p>Each week an automated pipeline asks the model to forecast, with no human editing of the numbers:</p>
     <ul>
-      <li><b>Scan.</b> The model searches the web for the week's genuinely significant AI-and-work developments and writes itself a neutral digest.</li>
+      <li><b>Self-examine.</b> The model's first instruction is introspection: walk each job's real task list and honestly judge what share it could perform <i>today</i> with current agent tooling and robotics — and what still blocks it (hands, licenses, trust, liability…). That per-job self-assessment is published as the tick on each bar and the capability index at the top.</li>
+      <li><b>Scan.</b> The model then searches the web for the week's genuinely significant AI-and-work developments and writes itself a neutral digest — context for deployment speed, never the source of its numbers.</li>
       <li><b>Forecast.</b> It then produces, several times independently, a probability for every occupation and horizon: <i>“the chance that by that year, AI routinely and economically performs the majority of this job's current tasks, and human employment in it is materially falling.”</i> It sees last week's numbers and is instructed to update like a Bayesian — move only where the evidence moved.</li>
       <li><b>Aggregate.</b> The published number is the median of the independent runs; the full run-to-run spread is kept in the data for transparency.</li>
       <li><b>Debias.</b> The model is explicitly instructed to respect historical base rates — occupations once rated "high risk" mostly kept growing, only more slowly — and to correct the documented tendency of AI forecasters to skew probabilities upward, especially about their own technology.</li>
@@ -338,6 +380,7 @@ footer a { color: var(--accent); text-decoration: none; }
       latest = window.PRELOADED.latest;
       history = (window.PRELOADED.history || []).map(f => ({
         week: f.week,
+        cap: f.capability_index,
         jobs: Object.fromEntries(f.jobs.map(j => [j.id, j]))
       }));
       return;
@@ -352,6 +395,7 @@ footer a { color: var(--accent); text-decoration: none; }
         fetch("data/history/" + w + ".json").then(r => r.ok ? r.json() : null).catch(() => null)));
       history = files.filter(Boolean).map(f => ({
         week: f.week,
+        cap: f.capability_index,
         jobs: Object.fromEntries(f.jobs.map(j => [j.id, j]))
       }));
     } catch (e) { history = []; }
@@ -418,10 +462,28 @@ footer a { color: var(--accent); text-decoration: none; }
     app.innerHTML = `
       <div class="headline-card">
         <div class="week-tag">The AI says — week ${esc(latest.week)}</div>
-        <h2>“${esc(latest.headline)}”</h2>
+        <h2 id="ai-headline" data-full="“${esc(latest.headline)}”">“${esc(latest.headline)}”<span class="cursor" aria-hidden="true"></span></h2>
         <p>${esc(latest.summary)}</p>
         <div class="signal"><b>Signal of the week:</b> ${esc(latest.signal_of_the_week)}</div>
       </div>
+
+      ${latest.capability_index != null ? `
+      <div class="capstrip">
+        <div class="num">
+          <div class="lbl">Self-assessed capability — today</div>
+          <div class="big" id="cap-big" data-v="${Math.round(latest.capability_index * 100)}">${Math.round(latest.capability_index * 100)}%</div>
+          ${(() => {
+            const prev = history.length >= 2 ? history[history.length - 2].cap : null;
+            if (prev == null) return `<div class="wkdelta">week ${esc(latest.week)} · first reading</div>`;
+            const d = Math.round((latest.capability_index - prev) * 100);
+            return `<div class="wkdelta" style="color:var(--${d > 0 ? "up" : d < 0 ? "down" : "muted"})">${d > 0 ? "▲" : d < 0 ? "▼" : "〓"} ${Math.abs(d)}pp vs last week</div>`;
+          })()}
+        </div>
+        <div class="expl">Of all the work in the <b>${latest.jobs.length} jobs I track</b>, this is the share of tasks
+        I estimate <b>I could already do today</b> — if employers deployed me and my agent tooling everywhere at once.
+        The displacement odds below lag this number: <b>the gap is friction</b> — hands, licenses, trust, liability.
+        Watch this number every Monday.</div>
+      </div>` : ""}
 
       <div class="tiles">
         <div class="tile">
@@ -484,12 +546,16 @@ footer a { color: var(--accent); text-decoration: none; }
             <div class="job">
               <div class="name">${esc(j.name)}</div>
               <div class="grp">${esc(j.group)}<span class="band"><i style="background:${rampColor(p)}"></i>${band(p)}</span></div>
-              <div class="note">“${esc(j.note || "")}”</div>
+              <div class="note">${j.can_now != null ? `
+                <div class="sa-line">Self-assessment: today I could do <b>~${Math.round(j.can_now * 100)}%</b> of this job's tasks.</div>
+                ${(j.blockers || []).length ? `<div class="sa-chips"><span class="chiplbl">what still stops me:</span>${j.blockers.map(b => `<span class="chip">${esc(b)}</span>`).join("")}</div>` : ""}
+                <div class="sa-quote">“${esc(j.note || "")}”</div>` : `“${esc(j.note || "")}”`}</div>
             </div>
             <div class="probcell">
               <div class="pct">${fmtPct(p)}</div>
               <div class="meter" title="ensemble spread ±${Math.round((j.spread2030 || 0) * 50)}pp">
                 <div class="fill" style="width:${Math.max(1, p * 100)}%;background:${rampColor(p)}"></div>
+                ${j.can_now != null ? `<div class="tick" style="left:${Math.round(j.can_now * 100)}%" title="self-assessed capability today: ~${Math.round(j.can_now * 100)}% of tasks"></div>` : ""}
               </div>
             </div>
             <div class="mini">
@@ -630,10 +696,48 @@ footer a { color: var(--accent); text-decoration: none; }
   // bar colors are inlined at render time — re-render when the color scheme flips
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => latest && render());
 
+  // one-time page-load moment: the AI "writes" its headline and the capability
+  // index counts up. Skipped entirely under prefers-reduced-motion.
+  let introDone = false;
+  function introAnimations() {
+    if (introDone) return;
+    introDone = true;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const big = document.getElementById("cap-big");
+    if (big) {
+      const target = +big.dataset.v;
+      const t0 = performance.now(), dur = 1400;
+      big.textContent = "0%";
+      const step = now => {
+        const k = Math.min(1, (now - t0) / dur);
+        big.textContent = Math.round(target * (1 - Math.pow(1 - k, 3))) + "%";
+        if (k < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+    const h = document.getElementById("ai-headline");
+    if (h) {
+      const full = h.dataset.full;
+      const cursor = document.createElement("span");
+      cursor.className = "cursor";
+      cursor.setAttribute("aria-hidden", "true");
+      h.textContent = "";
+      h.appendChild(cursor);
+      let i = 0;
+      const timer = setInterval(() => {
+        i = Math.min(full.length, i + 1 + (Math.random() < 0.3 ? 1 : 0));
+        h.textContent = full.slice(0, i);
+        h.appendChild(cursor);
+        if (i >= full.length) clearInterval(timer);
+      }, 22);
+    }
+  }
+
   try {
     await loadData();
     document.getElementById("loading")?.remove();
     render();
+    introAnimations();
   } catch (e) {
     document.getElementById("loading").outerHTML =
       '<div class="error">No forecast published yet. The first weekly run will populate this page automatically.</div>';
