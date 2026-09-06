@@ -31,6 +31,10 @@ METHODOLOGY_VERSION = 2
 
 client = OpenAI()
 
+# exact snapshot ids the API actually served this run (e.g. gpt-5.4-2026-03-17);
+# published as provenance instead of the requested alias
+SERVED_MODELS: list[str] = []
+
 
 def load_jobs() -> list[dict]:
     return json.loads((DATA / "jobs.json").read_text())["jobs"]
@@ -69,6 +73,7 @@ def scan_week(now: datetime) -> str:
             "is quiet, say so — do not inflate minor news."
         ),
     )
+    SERVED_MODELS.append(response.model)
     text = response.output_text
     if "<digest>" in text and "</digest>" in text:
         text = text.split("<digest>", 1)[1].split("</digest>", 1)[0]
@@ -187,6 +192,7 @@ def structured_call(prompt: str, schema_name: str, schema: dict,
             "strict": True,
         }},
     )
+    SERVED_MODELS.append(response.model)
     if response.status == "incomplete":
         reason = getattr(response.incomplete_details, "reason", "unknown")
         raise RuntimeError(f"incomplete response ({reason})")
@@ -294,7 +300,7 @@ COMMENT_SCHEMA = {
 
 
 def write_commentary(results: list[dict], digest: str, previous: dict | None,
-                     now: datetime) -> dict:
+                     now: datetime, evaluator_note: str = "") -> dict:
     table = "\n".join(
         f"- {r['id']} ({r['name']}): today={r['can_now']:.2f} "
         f"2027={r['p2027']:.2f} 2030={r['p2030']:.2f} "
@@ -321,6 +327,7 @@ def write_commentary(results: list[dict], digest: str, previous: dict | None,
         "your reasoning for its current number — task-level, specific, first person.\n"
         "Never cite external studies or attribute numbers to organizations. "
         "These are your own estimates."
+        + evaluator_note
     )
     return structured_call(prompt, "weekly_commentary", COMMENT_SCHEMA,
                            effort="medium", max_output_tokens=32000)
@@ -351,7 +358,17 @@ def main() -> None:
     results = aggregate(jobs, samples, previous)
 
     print("[4/4] Writing weekly commentary...", file=sys.stderr)
-    commentary = write_commentary(results, digest, previous, now)
+    served = (max(set(SERVED_MODELS), key=SERVED_MODELS.count)
+              if SERVED_MODELS else MODEL)
+    evaluator_note = ""
+    if previous and previous.get("model") and previous["model"] != served:
+        evaluator_note = (
+            f"\n\nNOTE: this is your first week as the evaluator — the model behind "
+            f"this index changed from \"{previous['model']}\" to \"{served}\". "
+            "You may briefly acknowledge taking over (and any resulting re-calibration) "
+            "in your summary if it feels natural."
+        )
+    commentary = write_commentary(results, digest, previous, now, evaluator_note)
     notes = {n["id"]: n["note"] for n in commentary.get("job_notes", [])}
     for r in results:
         r["note"] = notes.get(r["id"], "")
@@ -359,7 +376,9 @@ def main() -> None:
     payload = {
         "week": week,
         "generated_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "model": MODEL,
+        "model": (max(set(SERVED_MODELS), key=SERVED_MODELS.count)
+                  if SERVED_MODELS else MODEL),
+        "model_requested": MODEL,
         "capability_index": round(statistics.mean(r["can_now"] for r in results), 3),
         "methodology_version": METHODOLOGY_VERSION,
         "ensemble_size": len(samples),

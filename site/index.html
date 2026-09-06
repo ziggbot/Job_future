@@ -122,6 +122,14 @@ h1 { font-size: clamp(28px, 5vw, 44px); line-height: 1.1; margin: 6px 0 10px; le
 }
 .sa-quote { font-size: 12px; color: var(--ink-2); margin-top: 5px; font-style: italic; }
 
+.evalby { font-size: 12px; color: var(--muted); margin-top: 8px; }
+.evalby b { color: var(--ink-2); font-weight: 650; word-break: break-all; }
+.newmodel {
+  display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; color: #fff; background: var(--accent);
+  border-radius: 99px; padding: 2px 9px; margin-left: 8px; vertical-align: 1px;
+}
+
 /* ---------- stat tiles ---------- */
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 18px 0 0; }
 .tile {
@@ -381,6 +389,7 @@ footer a { color: var(--accent); text-decoration: none; }
       history = (window.PRELOADED.history || []).map(f => ({
         week: f.week,
         cap: f.capability_index,
+        model: f.model,
         jobs: Object.fromEntries(f.jobs.map(j => [j.id, j]))
       }));
       return;
@@ -396,6 +405,7 @@ footer a { color: var(--accent); text-decoration: none; }
       history = files.filter(Boolean).map(f => ({
         week: f.week,
         cap: f.capability_index,
+        model: f.model,
         jobs: Object.fromEntries(f.jobs.map(j => [j.id, j]))
       }));
     } catch (e) { history = []; }
@@ -477,6 +487,11 @@ footer a { color: var(--accent); text-decoration: none; }
             if (prev == null) return `<div class="wkdelta">week ${esc(latest.week)} · first reading</div>`;
             const d = Math.round((latest.capability_index - prev) * 100);
             return `<div class="wkdelta" style="color:var(--${d > 0 ? "up" : d < 0 ? "down" : "muted"})">${d > 0 ? "▲" : d < 0 ? "▼" : "〓"} ${Math.abs(d)}pp vs last week</div>`;
+          })()}
+          ${(() => {
+            const prevM = history.length >= 2 ? history[history.length - 2].model : null;
+            const changed = prevM && latest.model && prevM !== latest.model;
+            return `<div class="evalby">Evaluated by <b>${esc(latest.model)}</b>${changed ? `<span class="newmodel" title="the model behind this index changed this week (was: ${esc(prevM)})">New evaluator</span>` : ""}</div>`;
           })()}
         </div>
         <div class="expl">Of all the work in the <b>${latest.jobs.length} jobs I track</b>, this is the share of tasks
